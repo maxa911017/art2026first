@@ -2,10 +2,10 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <!-- 確保手機端不會因為雙擊或縮放而跑版 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>煙霧中長大的孩子：防空洞裡學會的事</title>
     
-    <!-- 匯入字體與圖示庫 -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Sans+TC:wght@100;300;400&family=Noto+Serif+TC:wght@200;300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,81 +18,60 @@
         }
 
         body {
-            background-color: #1a1a1a; 
+            background-color: #0a0a0a; 
             color: #EAE6DF;
             font-family: 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
             scroll-behavior: smooth;
             -webkit-tap-highlight-color: transparent;
             overscroll-behavior-y: none;
+            width: 100vw;
         }
 
         h1, h2, .font-serif { font-family: 'Noto Serif TC', serif; }
 
-        /* 底片顆粒感 */
+        /* 底片顆粒與環境光 */
         .grain {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtP38+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJklEQVQ4y2NgGAWjYBSMglEwCkbBKBgFo2AUjIJRMApGwSgYBaNgFAwAAwB7AQABK5Sj1AAAAABJRU5ErkJggg==');
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 50;
+            opacity: 0.12; pointer-events: none; z-index: 50;
         }
 
-        /* 探照燈 */
+        .depth-line {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 100vh;
+            background: linear-gradient(to bottom, transparent, rgba(158, 59, 59, 0.15), transparent);
+            pointer-events: none; z-index: 1;
+        }
+
         .flashlight-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle var(--light-size) at var(--cursor-x) var(--cursor-y), rgba(40,40,40,0) 0%, rgba(25,25,25,0.4) 60%, rgba(10,10,10,0.9) 100%);
-            pointer-events: none;
-            z-index: 40;
-            transition: background 0.8s ease-out; 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle var(--light-size) at var(--cursor-x) var(--cursor-y), rgba(40,40,40,0) 0%, rgba(20,20,20,0.6) 40%, rgba(5,5,5,0.98) 100%);
+            pointer-events: none; z-index: 40; transition: background 0.8s ease-out; 
             animation: breathe 5s ease-in-out infinite;
         }
         @keyframes breathe {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.02); }
         }
 
-        /* 屏息全黑遮罩 */
         .blackout-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at center, #000000 40%, rgba(80, 0, 0, 0.6) 100%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 48;
-            transition: opacity 0.5s ease;
+            opacity: 0; pointer-events: none; z-index: 48; transition: opacity 0.5s ease;
         }
 
-        /* 驚嚇元素：照明彈閃光 (Flare Flash) */
         .flashbang {
-            position: fixed;
-            inset: 0;
-            background-color: #fff4e6;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 60;
-            transition: opacity 0.1s ease-out;
-            mix-blend-mode: overlay;
+            position: fixed; inset: 0; background-color: #fff4e6;
+            opacity: 0; pointer-events: none; z-index: 60; transition: opacity 0.1s ease-out; mix-blend-mode: overlay;
         }
 
-        /* 驚嚇元素：轟炸機黑影掠過 (Bomber Shadow) */
         .bomber-shadow {
-            position: fixed;
-            top: -150vh;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            position: fixed; top: -150vh; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.95), transparent);
-            filter: blur(20px);
-            pointer-events: none;
-            z-index: 55;
-            opacity: 0;
+            filter: blur(20px); pointer-events: none; z-index: 55; opacity: 0;
         }
-        .bomber-shadow.swoop {
-            animation: swoop-down 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards;
-        }
+        .bomber-shadow.swoop { animation: swoop-down 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards; }
         @keyframes swoop-down {
             0% { top: -100vh; opacity: 0; transform: scaleY(1); }
             20% { opacity: 1; }
@@ -100,19 +79,11 @@
             100% { top: 150vh; opacity: 0; transform: scaleY(1); }
         }
 
-        /* 灰塵飄浮動畫 */
         .dust {
-            position: absolute;
-            background-color: rgba(234, 230, 223, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: floatUp linear infinite;
+            position: absolute; background-color: rgba(234, 230, 223, 0.4);
+            border-radius: 50%; pointer-events: none; animation: floatUp linear infinite;
         }
-        .dust.blurred {
-            filter: blur(4px);
-            background-color: rgba(234, 230, 223, 0.15);
-            z-index: 45; 
-        }
+        .dust.blurred { filter: blur(4px); background-color: rgba(234, 230, 223, 0.15); z-index: 45; }
         @keyframes floatUp {
             0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
             10% { opacity: 0.8; }
@@ -120,191 +91,246 @@
             100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
 
-        /* 滾動淡入 */
         .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0; transform: translateY(60px) scale(0.95); filter: blur(8px);
+            transition: all 2.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 
-        /* 巨物壓迫感文字 */
-        .oppressive-container {
-            display: flex; flex-direction: column; gap: 20vh; width: 100%;
-        }
+        .oppressive-container { display: flex; flex-direction: column; gap: 20vh; width: 100%; }
         .oppressive-text {
-            font-size: 48vw; line-height: 0.8;
-            color: #2a2a2a; font-weight: 900;
-            white-space: nowrap; user-select: none;
-            margin-left: -15vw;
-            text-shadow: 0 0 25px rgba(0,0,0,0.6);
+            font-size: 48vw; line-height: 0.8; color: #1a1a1a; font-weight: 900;
+            white-space: nowrap; user-select: none; margin-left: -15vw;
+            text-shadow: 0 0 40px rgba(0,0,0,0.8);
         }
         .oppressive-text:nth-child(even) { margin-left: 25vw; text-align: right; }
 
-        /* 雜訊效果 */
         .glitch { animation: glitch-anim 4s infinite; }
         @keyframes glitch-anim {
-            0%, 92%, 100% { transform: translate(0); color: #2a2a2a; opacity: 1; }
+            0%, 92%, 100% { transform: translate(0); color: #1a1a1a; opacity: 1; }
             94% { transform: translate(-4px, 3px); color: #9E3B3B; opacity: 0.8; }
-            96% { transform: translate(4px, -3px); color: #2a2a2a; opacity: 0.9; }
-            98% { transform: translate(-3px, -2px); color: #6E6E6E; opacity: 1; }
+            96% { transform: translate(4px, -3px); color: #1a1a1a; opacity: 0.9; }
+            98% { transform: translate(-3px, -2px); color: #444; opacity: 1; }
         }
-
-        /* 震顫效果 */
         .quake-effect {
             animation: quake 0.25s ease-in-out infinite alternate;
-            filter: blur(2px); color: #9E3B3B;
+            filter: blur(3px) !important; color: #9E3B3B; transform: scale(1.05);
         }
         @keyframes quake {
             0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(3px, 3px) rotate(1.5deg); }
-            50% { transform: translate(-3px, -3px) rotate(-1.5deg); }
-            75% { transform: translate(-4px, 2px) rotate(0deg); }
-            100% { transform: translate(3px, -4px) rotate(-1.5deg); }
+            25% { transform: translate(4px, 4px) rotate(1.5deg); }
+            50% { transform: translate(-4px, -4px) rotate(-1.5deg); }
+            75% { transform: translate(-5px, 2px) rotate(0deg); }
+            100% { transform: translate(4px, -5px) rotate(-1.5deg); }
         }
 
-        /* 記憶殘影浮現 */
-        .memory-image {
-            animation: pulse-slow 8s infinite alternate;
-            filter: grayscale(100%) contrast(120%) blur(1px);
+        /* 收音機調頻 */
+        .radio-container {
+            width: 100%; max-width: 300px; margin: 0 auto;
+            position: relative; padding: 20px 0;
         }
-        @keyframes pulse-slow {
-            0% { opacity: 0.2; transform: scale(1); }
-            100% { opacity: 0.5; transform: scale(1.05); }
+        .radio-slider {
+            -webkit-appearance: none; width: 100%; height: 2px;
+            background: linear-gradient(90deg, #333 0%, #9E3B3B 50%, #333 100%);
+            outline: none; border-radius: 2px; opacity: 0.7; transition: opacity 0.2s;
+        }
+        .radio-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 32px; background: #EAE6DF;
+            cursor: pointer; box-shadow: 0 0 15px rgba(234, 230, 223, 0.6);
+            border-radius: 2px;
+        }
+        .radio-signal-text {
+            opacity: 0.5; filter: blur(4px); transition: all 0.5s ease;
+            color: #444; text-shadow: none;
+        }
+        .radio-signal-text.found { 
+            opacity: 1; filter: blur(0); 
+            color: #9E3B3B; text-shadow: 0 0 15px rgba(158, 59, 59, 0.8);
         }
 
-        /* 角色名單網格互動 */
-        .char-item {
-            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
+        /* 擦拭畫布 */
+        .scratch-container {
+            position: relative; width: 100%; max-width: 320px; aspect-ratio: 4/3;
+            margin: 0 auto; overflow: hidden; border: 1px solid rgba(158, 59, 59, 0.2);
+            border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
+        .scratch-content {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 2rem;
+            background: #111; color: #EAE6DF; text-align: center;
+        }
+        #scratch-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; touch-action: none; cursor: crosshair;
+        }
+
+        /* 收集記憶碎片 */
+        .memory-fragment {
+            position: absolute; width: 40px; height: 40px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 35; opacity: 0.6; transition: all 0.3s ease;
+        }
+        .memory-fragment::before {
+            content: ''; position: absolute; width: 8px; height: 8px;
+            background-color: #9E3B3B; border-radius: 50%;
+            box-shadow: 0 0 12px 3px rgba(158, 59, 59, 0.8);
+            animation: pulse-fragment 2s infinite alternate;
+        }
+        .memory-fragment.collected { transform: scale(3); opacity: 0; pointer-events: none; }
+        @keyframes pulse-fragment { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
+
+        .collection-ui {
+            position: fixed; top: 20px; left: 20px; z-index: 90;
+            display: flex; gap: 8px; opacity: 0; transition: opacity 1s ease; pointer-events: none;
+        }
+        .collection-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            border: 1px solid #444; transition: all 0.5s ease;
+        }
+        .collection-dot.filled { background-color: #9E3B3B; border-color: #9E3B3B; box-shadow: 0 0 10px #9E3B3B; }
+
+        .hold-progress {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle, rgba(158, 59, 59, 0.3) 0%, transparent 70%);
+            border-radius: 50%; transform: scale(0); transition: transform 0.1s linear;
+        }
+        .is-holding .hold-progress { transform: scale(1.5); transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .char-item { transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; }
+        .char-item:hover { opacity: 1 !important; filter: blur(0px) !important; transform: scale(1.05); }
         .char-item::after {
-            content: '';
-            position: absolute;
-            bottom: -8px; left: 25%; right: 25%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(158, 59, 59, 0.5), transparent);
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            content: ''; position: absolute; bottom: -8px; left: 30%; right: 30%;
+            height: 1px; background: linear-gradient(90deg, transparent, rgba(158, 59, 59, 0.5), transparent);
+            opacity: 0; transition: opacity 0.5s ease;
         }
-        .char-item.is-dimmed { opacity: 0.15; filter: blur(3px); transform: scale(0.95); }
-        .char-item.is-active { transform: scale(1.15); opacity: 1; }
-        .char-item.is-active .char-name { color: #9E3B3B; text-shadow: 0 0 15px rgba(158, 59, 59, 0.5); }
+        .char-item.is-dimmed { opacity: 0.1; filter: blur(3px); transform: scale(0.95); }
+        .char-item.is-active { transform: scale(1.2); opacity: 1; z-index: 20; }
+        .char-item.is-active .char-name { color: #9E3B3B; text-shadow: 0 0 20px rgba(158, 59, 59, 0.6); }
         .char-item.is-active::after { opacity: 1; }
 
-        /* 角色故事 Modal */
         .story-modal { transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); }
-        .is-rumbling { animation: rumble 0.1s infinite; }
-        @keyframes rumble {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(1px, -1px); }
-            50% { transform: translate(-1px, 1px); }
-            75% { transform: translate(-1px, -1px); }
-            100% { transform: translate(1px, 1px); }
-        }
-
-        /* 打字機游標閃爍 */
-        .typewriter-cursor::after {
-            content: '|';
-            animation: blink 1s step-end infinite;
-            color: #9E3B3B;
-            margin-left: 2px;
-        }
+        .typewriter-cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #9E3B3B; margin-left: 2px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* 紙飛機手勢 */
-        .airplane-container {
-            transition: all 1.2s ease-in; position: relative;
-            z-index: 45; touch-action: none; padding: 40px;
-        }
+        /* 紙飛機與微光牆 */
+        .airplane-container { transition: all 1.2s ease-in; position: relative; z-index: 45; touch-action: none; padding: 40px; cursor: grab; }
+        .airplane-container:active { cursor: grabbing; }
         .airplane-fly { transform: translateY(-60vh) scale(0.2) rotate(25deg); opacity: 0; }
-        .airplane-text { opacity: 0; transition: opacity 3s ease 0.5s; } /* 縮短等待時間，準備迎接驚嚇 */
-        .airplane-text.show { opacity: 1; }
+        .airplane-text { opacity: 0; transition: opacity 3s ease 0.5s; filter: blur(4px); }
+        .airplane-text.show { opacity: 1; filter: blur(0); }
 
-        /* 微光留言牆 */
         .whisper-dot {
-            width: 10px; height: 10px;
-            background-color: rgba(234, 230, 223, 0.15);
-            border-radius: 50%; position: absolute;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 8px rgba(234, 230, 223, 0.2);
-            z-index: 45; padding: 25px; background-clip: content-box;
+            width: 14px; height: 14px; background-color: rgba(234, 230, 223, 0.2);
+            border-radius: 50%; position: absolute; transition: all 0.4s ease;
+            box-shadow: 0 0 10px rgba(234, 230, 223, 0.1); z-index: 45; padding: 25px; background-clip: content-box; cursor: pointer;
         }
-        .whisper-dot.touched {
-            background-color: #EAE6DF; box-shadow: 0 0 30px rgba(234, 230, 223, 1);
-            transform: scale(1.4);
-        }
+        .whisper-dot:hover { background-color: rgba(234, 230, 223, 0.5); transform: scale(1.2); }
+        .whisper-dot.touched { background-color: #EAE6DF; box-shadow: 0 0 30px rgba(234, 230, 223, 1); transform: scale(1.4); }
         .whisper-text {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
             white-space: nowrap; font-size: 1rem; color: #EAE6DF;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
-            letter-spacing: 0.15em; font-family: 'Noto Serif TC', serif;
-            text-shadow: 0 2px 12px rgba(0,0,0,1);
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease, filter 0.5s ease;
+            letter-spacing: 0.15em; font-family: 'Noto Serif TC', serif; text-shadow: 0 2px 20px rgba(0,0,0,1); filter: blur(2px);
         }
-        .whisper-dot.touched .whisper-text { opacity: 1; }
+        .whisper-dot.touched .whisper-text { opacity: 1; filter: blur(0); }
 
+        /* FAB 與提示 */
+        .fab-ticket {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 90;
+            background: rgba(10, 10, 10, 0.6); border: 1px solid rgba(158, 59, 59, 0.3);
+            color: #EAE6DF; padding: 1rem 1.5rem; border-radius: 50px;
+            font-family: 'Noto Serif TC', serif; letter-spacing: 0.2em; display: flex; align-items: center; gap: 8px;
+            backdrop-filter: blur(8px); box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none; opacity: 0; transform: translateY(30px) scale(0.9); pointer-events: none;
+        }
+        .fab-ticket.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+        .fab-ticket:hover {
+            border-color: #9E3B3B; color: #fff; background: rgba(20, 10, 10, 0.9);
+            box-shadow: 0 0 25px rgba(158, 59, 59, 0.5); transform: translateY(-5px);
+        }
+        .fab-pulse { width: 8px; height: 8px; background-color: #9E3B3B; border-radius: 50%; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+        .scroll-hint {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            opacity: 0; transition: opacity 1.5s ease; animation: bounce-soft 2.5s infinite;
+            pointer-events: none; text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
+        @keyframes bounce-soft {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(12px); }
+        }
         body.modal-open { overflow: hidden; }
     </style>
 </head>
 <body>
     <div class="grain"></div>
-    
-    <!-- 背景橫幅記憶殘影 -->
-    <div class="fixed inset-0 z-0 opacity-20 mix-blend-screen pointer-events-none w-full h-full flex justify-center items-center overflow-hidden mask-image-bunker">
-        <img src="橫幅CMYK.jpg" alt="Memory Banner" class="w-auto h-full object-cover filter grayscale blur-[2px] animate-pulse" onerror="this.style.display='none'">
+    <div class="depth-line"></div> 
+
+    <!-- 隱藏的收音機真實音檔 -->
+    <audio id="secret-audio" src="1.mp3" loop preload="auto"></audio>
+
+    <!-- 記憶碎片收集 UI (隱藏直到進入) -->
+    <div class="collection-ui" id="collection-ui">
+        <div class="collection-dot" id="dot-1"></div>
+        <div class="collection-dot" id="dot-2"></div>
+        <div class="collection-dot" id="dot-3"></div>
     </div>
+
+    <!-- 散落的記憶碎片 -->
+    <div class="memory-fragment" style="top: 180vh; left: 15vw;" onclick="collectFragment(this, 1)"></div>
+    <div class="memory-fragment" style="top: 420vh; right: 10vw;" onclick="collectFragment(this, 2)"></div>
+    <div class="memory-fragment" style="top: 720vh; left: 50vw; transform: translateX(-50%);" onclick="collectFragment(this, 3)"></div>
 
     <div class="flashlight-overlay" id="flashlight"></div>
     <div class="blackout-overlay" id="blackout"></div>
     
-    <!-- 驚嚇特效層 -->
     <div id="flashbang" class="flashbang"></div>
     <div id="bomber-shadow" class="bomber-shadow"></div>
-
     <div id="dust-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-10 overflow-hidden"></div>
 
-    <!-- 音效切換 -->
-    <button id="audio-toggle" class="fixed top-6 right-6 z-50 p-3 text-gray-400 hover:text-white transition-colors opacity-0 duration-1000 bg-black/30 rounded-full backdrop-blur-md">
-        <i data-lucide="volume-x" id="audio-icon" class="w-6 h-6 drop-shadow-lg"></i>
+    <!-- 音效控制 UI -->
+    <button id="audio-toggle" class="fixed top-6 right-6 z-50 p-3 text-gray-400 hover:text-[#EAE6DF] transition-colors opacity-0 duration-1000 flex items-center gap-3 pr-5 group drop-shadow-[0_0_15px_rgba(0,0,0,1)]">
+        <i data-lucide="volume-x" id="audio-icon" class="w-5 h-5"></i>
+        <span class="text-xs tracking-widest font-serif opacity-0 group-hover:opacity-100 transition-opacity w-0 group-hover:w-auto overflow-hidden whitespace-nowrap">環境音效</span>
     </button>
 
-    <!-- 首頁 Hero Section (字體放大) -->
-    <main class="h-[100dvh] flex flex-col justify-center items-center p-6 text-center relative z-20">
-        <h1 class="text-4xl md:text-6xl mb-6 font-light tracking-[0.35em] opacity-0 transition-opacity duration-[3000ms] ease-in-out" id="main-title">
+    <a href="#ticket-link" id="fab-ticket" class="fab-ticket group">
+        <div class="fab-pulse"></div>
+        <span class="text-sm">輕聲購票</span>
+    </a>
+
+    <main class="min-h-[100dvh] flex flex-col justify-center items-center p-6 text-center relative z-20">
+        <h1 class="text-4xl md:text-6xl mb-6 font-light tracking-[0.35em] opacity-0 transition-opacity duration-[3000ms] ease-in-out drop-shadow-2xl" id="main-title">
             煙霧中長大的孩子
         </h1>
-        <p class="text-base md:text-lg text-gray-400 tracking-[0.5em] mb-16 opacity-0 transition-opacity duration-[3000ms] delay-1000" id="sub-title">
+        <p class="text-base md:text-lg text-gray-400 tracking-[0.5em] mb-16 opacity-0 transition-opacity duration-[3000ms] delay-1000 drop-shadow-lg" id="sub-title">
             防空洞裡學會的事
         </p>
         
-        <div class="mt-12 space-y-12 opacity-0 transition-opacity duration-[3000ms] delay-[2000ms]" id="hero-content">
+        <div class="mt-12 space-y-12 opacity-0 transition-opacity duration-[3000ms] delay-[2000ms] relative z-30" id="hero-content">
             <p class="text-lg md:text-xl italic text-[#EAE6DF] opacity-90 font-serif tracking-[0.2em] drop-shadow-md">「今天外面的天空，很吵。」</p>
-            <button onclick="enterShelter()" class="border border-[#9E3B3B] bg-black/40 text-[#EAE6DF] px-10 py-5 hover:bg-[#9E3B3B] transition duration-700 uppercase tracking-[0.2em] text-sm group backdrop-blur-sm">
-                進入防空洞
-                <span class="block text-xs text-gray-400 mt-3 opacity-80 tracking-widest">開啟音效與微光，向下探索</span>
+            <button onclick="enterShelter()" id="enter-btn" class="border border-[#9E3B3B]/50 text-[#EAE6DF] px-10 py-5 hover:border-[#9E3B3B] hover:bg-[#9E3B3B]/10 transition duration-1000 uppercase tracking-[0.2em] text-sm group cursor-pointer relative overflow-hidden backdrop-blur-sm shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                <span class="relative z-10 drop-shadow-md">進入防空洞</span>
+                <span class="block text-xs text-gray-500 mt-3 opacity-80 tracking-widest relative z-10 transition-colors duration-500">開啟音效與微光，開始探索</span>
             </button>
+        </div>
+
+        <div id="scroll-hint" class="scroll-hint flex flex-col items-center text-[#EAE6DF]/40">
+            <span class="text-xs tracking-widest mb-2 font-serif">向下深入</span>
+            <i data-lucide="chevron-down" class="w-5 h-5"></i>
         </div>
     </main>
 
-    <!-- 巨物壓迫感與黑白主視覺閃回 -->
-    <section class="min-h-[250vh] relative flex flex-col justify-start items-center overflow-hidden z-10 pt-[30vh]">
-        
-        <div class="absolute inset-0 z-0 flex justify-center items-center pointer-events-none opacity-50 mix-blend-screen overflow-hidden">
-            <img src="黑白主視覺 800x1000px.jpg" alt="Dark Memory" class="w-full max-w-lg h-auto object-cover memory-image" onerror="this.style.display='none'">
-        </div>
-
-        <div class="absolute w-full top-20 oppressive-container opacity-90 pointer-events-none z-10 mix-blend-multiply">
+    <section class="min-h-[150vh] relative flex flex-col justify-start items-center overflow-hidden z-10 pt-[20vh]">
+        <div class="absolute w-full top-20 oppressive-container opacity-80 pointer-events-none z-10 mix-blend-multiply">
             <h2 class="oppressive-text">轟炸</h2>
             <h2 class="oppressive-text glitch">警報</h2>
-            <h2 class="oppressive-text">墜落</h2>
         </div>
         
-        <!-- 字體放大 -->
-        <div class="reveal relative z-20 max-w-md mx-auto px-10 text-center mt-[120vh] bg-[#111111]/60 p-8 rounded-lg backdrop-blur-md shadow-2xl border border-[#333]">
-            <p class="text-sm md:text-base text-gray-200 tracking-[0.3em] leading-[3] border-l-2 border-[#9E3B3B] pl-6 text-left">
+        <div class="reveal relative z-20 max-w-2xl mx-auto px-8 text-center mt-[80vh]">
+            <p class="text-base md:text-lg text-gray-300 tracking-[0.3em] leading-[3.5] border-l-[1px] border-[#9E3B3B]/50 pl-8 text-left drop-shadow-[0_4px_10px_rgba(0,0,0,1)]">
                 大人用很大的聲音，<br>
                 說著我們聽不懂的詞彙。<br><br>
                 我們只能越縮越小，<br>
@@ -313,266 +339,294 @@
         </div>
     </section>
 
-    <!-- 互動：屏息躲藏 (Hold to Hide) - 帶有閃光驚嚇 -->
-    <section class="py-40 px-8 max-w-2xl mx-auto relative z-20 text-center">
-        <div class="reveal border border-[#444] bg-[#1a1a1a] p-12 rounded-full w-56 h-56 mx-auto flex flex-col justify-center items-center relative shadow-[0_0_50px_rgba(0,0,0,0.8)]" id="hold-zone">
-            <div class="absolute inset-0 rounded-full border border-[#9E3B3B] opacity-40 animate-ping"></div>
-            <p class="text-base md:text-lg text-[#9E3B3B] tracking-widest font-serif drop-shadow-lg">長按螢幕</p>
-            <p class="text-xs md:text-sm text-gray-400 tracking-[0.2em] mt-4 leading-loose">屏住呼吸<br>躲避上面的人</p>
+    <section class="py-32 px-8 max-w-xl mx-auto relative z-20 text-center">
+        <div class="reveal flex flex-col items-center">
+            <i data-lucide="radio" class="w-8 h-8 text-[#555] mb-8"></i>
+            <p class="text-xs text-gray-400 tracking-[0.4em] mb-12 font-serif">試著左右滑動，在雜訊中尋找微弱的訊號</p>
+            
+            <div class="radio-container">
+                <input type="range" min="0" max="100" value="10" class="radio-slider" id="radio-dial">
+                <div class="flex justify-between w-full mt-6 text-[10px] text-[#444] font-mono tracking-widest">
+                    <span>FM 88.0</span>
+                    <span class="text-[#9E3B3B] opacity-50 pulse-fragment">CH. 4</span>
+                    <span>AM 108</span>
+                </div>
+            </div>
+
+            <div class="mt-16 h-20 flex items-center justify-center">
+                <p id="radio-msg" class="radio-signal-text text-sm md:text-base tracking-[0.3em] font-serif leading-loose">
+                    「...滋滋...沙沙...」
+                </p>
+            </div>
         </div>
     </section>
 
-    <!-- 創傷記憶與震顫 (PTSD Trigger) -->
-    <section class="py-40 px-8 max-w-2xl mx-auto space-y-56 relative z-20">
-        <div class="reveal leading-loose text-center">
-            <p class="text-2xl md:text-3xl font-serif text-gray-200 tracking-widest">大人說，只要躲好，就不會被看見。</p>
+    <section class="py-40 px-8 max-w-2xl mx-auto relative z-20 text-center">
+        <div class="reveal w-64 h-64 mx-auto flex flex-col justify-center items-center relative cursor-pointer select-none" id="hold-zone">
+            <div class="hold-progress"></div>
+            <div class="absolute inset-0 rounded-full border-[1px] border-[#9E3B3B] opacity-20 animate-ping pointer-events-none shadow-[0_0_30px_rgba(158,59,59,0.2)]"></div>
+            
+            <div class="relative z-10 flex flex-col items-center pointer-events-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                <i data-lucide="hand" class="w-6 h-6 text-[#9E3B3B] mb-4 opacity-70"></i>
+                <p class="text-base md:text-lg text-[#EAE6DF] tracking-widest font-serif font-light">按住不放</p>
+                <p class="text-xs md:text-sm text-gray-500 tracking-[0.2em] mt-3 leading-loose">屏住呼吸<br>躲避上面的人</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-40 px-6 max-w-3xl mx-auto relative z-20">
+        <div class="reveal text-center mb-16">
+            <p class="text-xs text-[#9E3B3B] tracking-[0.4em] mb-4 font-serif">用手指擦去歷史的灰塵</p>
         </div>
 
-        <div class="reveal grid grid-cols-1 gap-8 text-center bg-[#111111]/80 p-8 rounded-sm shadow-xl" id="quake-trigger">
-            <p class="text-xl md:text-2xl font-serif text-gray-300 tracking-widest transition-all duration-300 leading-loose" id="quake-target">
+        <div class="reveal scratch-container mx-auto" id="scratch-area">
+            <div class="scratch-content">
+                <p class="font-serif text-sm md:text-base tracking-widest leading-loose text-gray-300 opacity-90 text-left">
+                    給未來的我：<br><br>
+                    如果這封信被看見，<br>
+                    代表我們終於可以<br>
+                    在陽光下大口呼吸了。
+                </p>
+            </div>
+            <canvas id="scratch-canvas"></canvas>
+        </div>
+    </section>
+
+    <section class="py-32 px-8 max-w-3xl mx-auto space-y-40 relative z-20">
+        <div class="reveal text-center">
+            <p class="text-xl md:text-3xl font-serif text-[#EAE6DF] tracking-widest drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] opacity-80">
+                大人說，只要躲好，就不會被看見。
+            </p>
+        </div>
+
+        <div class="reveal flex justify-center items-center w-full min-h-[30vh]" id="quake-trigger">
+            <p class="text-2xl md:text-4xl font-serif text-[#9E3B3B] tracking-widest transition-all duration-300 leading-[2.5] text-center drop-shadow-[0_0_25px_rgba(158,59,59,0.4)]" id="quake-target">
                 「可是，如果整片天空<br>掉下來了呢？」
             </p>
         </div>
     </section>
 
-    <!-- 全角色網格名單 (The Children) -->
-    <section class="py-24 px-6 relative z-20 bg-gradient-to-b from-transparent via-[#141414] to-transparent">
-        <div id="grid-view" class="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center transition-all duration-1000 ease-in-out">
-            <div class="text-center mb-24 reveal">
-                <!-- 副標題全面放大 -->
-                <h3 class="font-serif tracking-[0.6em] text-[#EAE6DF] opacity-50 text-base md:text-lg mb-6">THE CHILDREN</h3>
-                <p class="font-serif tracking-[0.4em] text-[#9E3B3B] text-sm md:text-base opacity-90">點擊名字，聽見那些沒有被說出口的恐懼</p>
+    <section class="py-32 px-4 relative z-20">
+        <div id="grid-view" class="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center transition-all duration-1000 ease-in-out">
+            <div class="text-center mb-32 reveal">
+                <h3 class="font-serif tracking-[0.8em] text-[#EAE6DF] opacity-30 text-sm md:text-base mb-6 drop-shadow-md">THE CHILDREN</h3>
+                <p class="font-serif tracking-[0.4em] text-[#9E3B3B]/80 text-sm md:text-base">點擊名字，聽見那些沒有被說出口的恐懼</p>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-16 gap-x-6 w-full px-4">
-                <!-- 13位角色列表完整收錄，名字放大 -->
+            <!-- 調整 Grid 以容納 13 人 -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-20 gap-x-4 w-full">
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="王韋鈞" data-action="他最近開始害怕下雨。" data-quote="「滴答，滴答... 聽起來好像那天晚上的聲音。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">王韋鈞</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">王韋鈞</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="吳佩錡" data-action="她把最喜歡的蠟筆藏在鞋子裡。" data-quote="「因為鞋子是要穿著跑的，跑的時候，顏色就不會被炸碎。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">吳佩錡</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">吳佩錡</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="徐瑞宏" data-action="他總是一直盯著天花板。" data-quote="「如果在天花板畫上天空，我們是不是就可以出去了？」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">徐瑞宏</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">徐瑞宏</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="曾語潔" data-action="她已經三天沒有開口說話了。" data-quote="「大人說，只要不出聲，怪物就找不到我們。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">曾語潔</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">曾語潔</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="蕭靜瑩" data-action="她睡前會把耳朵緊緊摀住。" data-quote="「就算很安靜的時候，我還是能聽見那種嗡嗡的尖叫聲。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">蕭靜瑩</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">蕭靜瑩</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="葉相吟" data-action="她的口袋裡裝滿了撕碎的紙條。" data-quote="「每一張上面都寫著回家的路，但我好像忘記家長什麼樣子了。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">葉相吟</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">葉相吟</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="林孝丞" data-action="他以為防空洞只是一個捉迷藏的遊戲。" data-quote="「為什麼這次鬼當了那麼久，還不說找到你了？」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林孝丞</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林孝丞</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="李柏翰" data-action="他不敢再看天空飛過的鳥。" data-quote="「因為上一次，飛過去的黑鳥掉下了會爆炸的蛋。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">李柏翰</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">李柏翰</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="廖冠皓" data-action="他一直在畫同一個沒有門的房子。" data-quote="「沒有門，壞人進不來；但我們，好像也出不去了。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">廖冠皓</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">廖冠皓</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="林心惟" data-action="她說黑色的煙聞起來像燒焦的糖果。" data-quote="「那是那天媽媽給我的，最後一顆糖果的味道。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林心惟</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林心惟</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="陳雅均" data-action="她堅持要穿著大人的外套睡覺。" data-quote="「外套上還有爸爸的味道，假裝爸爸還在。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">陳雅均</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">陳雅均</span>
                 </div>
                 <div class="char-item text-center cursor-pointer reveal py-2" data-name="呂穎薰" data-action="她把洋娃娃的眼睛用布矇了起來。" data-quote="「不要看，看了晚上會做惡夢哦...」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">呂穎薰</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">呂穎薰</span>
                 </div>
+                <!-- 第 13 位居中處理 -->
                 <div class="char-item text-center cursor-pointer reveal py-2 md:col-start-2 lg:col-start-auto" data-name="林珈儀" data-action="她在牆上畫了一扇窗，說可以看見星星。" data-quote="「可是地下室哪有星星呢？只有偶爾震動落下的灰塵。」">
-                    <span class="char-name font-serif text-xl md:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林珈儀</span>
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林珈儀</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 角色故事 Modal (字體放大版) -->
     <div id="story-modal" class="story-modal fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none">
-        <div class="absolute inset-0 bg-[#0a0a0a]/95 backdrop-blur-xl" onclick="closeStory()">
-            <!-- 背景記憶潛伏 -->
-            <img src="黑白主視覺 800x1000px.jpg" alt="bg" class="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-screen filter grayscale blur-md" onerror="this.style.display='none'">
-        </div>
-        <div id="story-content-box" class="relative z-10 p-8 max-w-lg w-full text-center scale-95 transition-transform duration-500">
-            <p id="story-name" class="text-2xl md:text-3xl text-gray-200 tracking-[0.8em] mb-4 font-serif"></p>
-            <p id="story-action" class="text-sm md:text-base text-gray-400 tracking-[0.2em] mb-12 font-serif opacity-0 transition-opacity duration-1000 border-b border-[#444] pb-6 leading-loose"></p>
+        <div class="absolute inset-0 bg-[#000000]/95 backdrop-blur-2xl cursor-pointer" onclick="closeStory()" title="點擊關閉"></div>
+        <div id="story-content-box" class="relative z-10 p-8 max-w-lg w-full text-center scale-95 transition-transform duration-700 pointer-events-none">
+            <p id="story-name" class="text-2xl md:text-3xl text-gray-200 tracking-[0.8em] mb-4 font-serif drop-shadow-lg"></p>
+            <p id="story-action" class="text-sm md:text-base text-gray-400 tracking-[0.2em] mb-12 font-serif opacity-0 transition-opacity duration-1000 border-b border-[#333] pb-6 leading-loose"></p>
             
             <div class="min-h-[150px] flex items-center justify-center px-4">
-                <p id="story-quote" class="text-lg md:text-xl text-[#9E3B3B] leading-[2.5] tracking-[0.2em] font-serif text-center w-full shadow-black drop-shadow-2xl"></p>
+                <p id="story-quote" class="text-lg md:text-xl text-[#9E3B3B] leading-[2.5] tracking-[0.2em] font-serif text-center w-full shadow-black drop-shadow-[0_0_15px_rgba(0,0,0,1)]"></p>
             </div>
 
-            <button onclick="closeStory()" class="mt-20 text-xs md:text-sm text-gray-500 hover:text-white tracking-[0.4em] border-b border-gray-600 pb-1 transition-colors">閉上眼</button>
+            <button onclick="closeStory()" class="mt-24 text-xs text-gray-500 hover:text-white tracking-[0.5em] border-b border-gray-800 pb-2 transition-colors pointer-events-auto font-serif">閉上眼</button>
         </div>
     </div>
 
-    <!-- 紙飛機手勢 (帶有隱藏的轟炸機驚嚇) -->
     <section class="py-40 px-8 relative z-20">
         <div class="reveal flex flex-col items-center justify-center">
-            <div class="airplane-container flex flex-col items-center" id="airplane">
-                <svg width="55" height="55" viewBox="0 0 24 24" fill="none" stroke="#9E3B3B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="-rotate-45 drop-shadow-[0_0_15px_rgba(158,59,59,0.6)]">
+            <div class="airplane-container flex flex-col items-center select-none" id="airplane">
+                <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="#9E3B3B" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="-rotate-45 drop-shadow-[0_0_10px_rgba(158,59,59,0.4)] pointer-events-none opacity-80">
                     <path d="M22 2L11 13"></path>
                     <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
                 </svg>
-                <div class="flex flex-col items-center mt-8 text-[#9E3B3B] animate-pulse" id="airplane-hint">
-                    <i data-lucide="chevrons-up" class="w-6 h-6 mb-2"></i>
-                    <p class="text-xs md:text-sm tracking-[0.4em]">向上滑動飛出</p>
+                <div class="flex flex-col items-center mt-10 text-[#9E3B3B]/60 animate-pulse pointer-events-none" id="airplane-hint">
+                    <i data-lucide="chevrons-up" class="w-5 h-5 mb-3"></i>
+                    <p class="text-xs tracking-[0.4em] font-light">按住向上飛出</p>
                 </div>
             </div>
-            <!-- 引言放大 -->
-            <p class="airplane-text text-lg md:text-xl italic text-[#EAE6DF] font-serif tracking-widest text-center leading-[2.5] mt-10" id="airplane-msg">
+            <p class="airplane-text text-lg md:text-xl italic text-[#EAE6DF] font-serif tracking-widest text-center leading-[2.5] mt-16 drop-shadow-[0_5px_15px_rgba(0,0,0,1)]" id="airplane-msg">
                 「紙飛機如果飛得夠高，<br>可以飛到沒有煙的地方嗎？」
             </p>
         </div>
     </section>
 
-    <!-- 微光留言牆 -->
-    <section class="min-h-[100dvh] relative flex flex-col items-center justify-center z-40 py-20 bg-gradient-to-t from-black via-[#0f0f0f] to-transparent">
-        <div class="text-center absolute top-20 w-full reveal px-6 pointer-events-none z-10">
-            <p class="text-base text-gray-400 tracking-[0.4em] font-serif leading-loose">黑暗裡，還有其他沒有說話的人。</p>
-            <p class="text-sm text-[#9E3B3B] mt-4 tracking-widest">（請輕觸畫面上的微光）</p>
+    <section class="min-h-[100dvh] relative flex flex-col items-center justify-center z-40 py-20 bg-gradient-to-t from-[#020202] via-[#0a0a0a] to-transparent">
+        <div class="text-center absolute top-32 w-full reveal px-6 pointer-events-none z-10">
+            <p class="text-base text-[#EAE6DF]/60 tracking-[0.4em] font-serif leading-loose drop-shadow-md">黑暗裡，還有其他沒有說話的人。</p>
+            <p class="text-xs text-[#9E3B3B]/70 mt-6 tracking-[0.3em] font-light">（輕觸畫面上的微光）</p>
         </div>
-        <div id="whisper-wall" class="w-full h-[70vh] relative mt-32"></div>
+        <div id="whisper-wall" class="w-full h-[70vh] relative mt-40 max-w-4xl mx-auto"></div>
     </section>
 
-    <!-- Footer -->
-    <footer class="reveal py-20 text-center relative z-20 pb-32 bg-black border-t border-[#222]">
-        <p class="text-sm uppercase tracking-[0.4em] text-[#666] mb-8">2026 臺北藝穗節</p>
-        <button class="text-base text-[#EAE6DF] hover:text-[#9E3B3B] border-b border-[#555] pb-2 transition duration-500 tracking-widest font-serif">
-            [ 輕聲購票 ]
-        </button>
+    <footer class="reveal py-24 text-center relative z-20 pb-32 bg-[#020202]">
+        <p class="text-xs uppercase tracking-[0.5em] text-[#444] mb-4">2026 臺北藝穗節</p>
+        <p class="text-[10px] tracking-widest text-[#333] font-serif">煙霧中長大的孩子 © All Rights Reserved.</p>
     </footer>
 
     <script>
         lucide.createIcons();
         const root = document.documentElement;
 
-        // --- 1. 開場控制 ---
+        // --- 全局狀態 ---
+        let audioCtx, droneOsc, droneGain, lfo, isAudioPlaying = false;
+        let radioStaticNode, radioGain;
+        let fragmentsCollected = 0;
+
         window.onload = () => {
             setTimeout(() => document.getElementById('main-title').classList.remove('opacity-0'), 800);
             setTimeout(() => document.getElementById('sub-title').classList.remove('opacity-0'), 1500);
             setTimeout(() => document.getElementById('hero-content').classList.remove('opacity-0'), 2500);
+            
+            setTimeout(() => {
+                document.getElementById('fab-ticket').classList.add('visible');
+                document.getElementById('audio-toggle').classList.remove('opacity-0');
+            }, 4000);
+            setTimeout(() => { document.getElementById('scroll-hint').style.opacity = '1'; }, 5000);
+
             createDust();
             createWhisperWall();
             bindCharClicks();
+            initScratchCanvas();
+            initRadioInteraction();
         };
 
-        // --- 2. 手指探照燈 ---
+        // --- 手指探照燈 ---
         function updateLight(e) {
-            let x = e.touches ? e.touches[0].clientX : e.clientX;
-            let y = e.touches ? e.touches[0].clientY : e.clientY;
-            root.style.setProperty('--cursor-x', x + 'px');
-            root.style.setProperty('--cursor-y', y + 'px');
+            let x = e.clientX || (e.touches && e.touches[0].clientX);
+            let y = e.clientY || (e.touches && e.touches[0].clientY);
+            if(x !== undefined && y !== undefined) {
+                root.style.setProperty('--cursor-x', x + 'px');
+                root.style.setProperty('--cursor-y', y + 'px');
+            }
         }
-        document.addEventListener('touchmove', updateLight, {passive: true});
-        document.addEventListener('touchstart', updateLight, {passive: true});
-        document.addEventListener('mousemove', updateLight);
+        document.addEventListener('pointermove', updateLight, {passive: true});
 
-        // --- 3. Web Audio API 音效與驚嚇生成 ---
-        let audioCtx, droneOsc, droneGain, lfo, tinnitusOsc, tinnitusGain, isAudioPlaying = false;
-        
+        window.addEventListener('scroll', () => {
+            if(window.scrollY > window.innerHeight * 0.3) {
+                document.getElementById('scroll-hint').style.opacity = '0';
+            }
+        }, {passive: true});
+
         function initAudio() {
             if(audioCtx) return;
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
+            // 1. 環境低頻
             droneOsc = audioCtx.createOscillator();
             droneOsc.type = 'sine';
-            droneOsc.frequency.value = 50; 
-            
+            droneOsc.frequency.value = 45; 
             droneGain = audioCtx.createGain();
             droneGain.gain.value = 0; 
-
             lfo = audioCtx.createOscillator();
             lfo.type = 'sine';
-            lfo.frequency.value = 0.25; 
+            lfo.frequency.value = 0.2; 
             let lfoGain = audioCtx.createGain();
-            lfoGain.gain.value = 0.6;
+            lfoGain.gain.value = 0.5;
 
-            lfo.connect(lfoGain);
-            lfoGain.connect(droneGain.gain);
-            droneOsc.connect(droneGain);
-            droneGain.connect(audioCtx.destination);
+            lfo.connect(lfoGain); lfoGain.connect(droneGain.gain);
+            droneOsc.connect(droneGain); droneGain.connect(audioCtx.destination);
+            droneOsc.start(); lfo.start();
+
+            // 2. 收音機背景白噪音
+            let bufferSize = audioCtx.sampleRate * 2; 
+            let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            let data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
             
-            droneOsc.start();
-            lfo.start();
+            radioStaticNode = audioCtx.createBufferSource();
+            radioStaticNode.buffer = buffer;
+            radioStaticNode.loop = true;
+
+            radioGain = audioCtx.createGain();
+            radioGain.gain.value = 0; 
+
+            radioStaticNode.connect(radioGain);
+            radioGain.connect(audioCtx.destination);
+            radioStaticNode.start();
         }
 
-        // 驚嚇音效：炸彈閃光悶響
         function playFlashSound() {
             if(!isAudioPlaying || !audioCtx) return;
             let noiseNode = audioCtx.createBufferSource();
-            let bufferSize = audioCtx.sampleRate * 1.5; // 1.5 seconds
+            let bufferSize = audioCtx.sampleRate * 1.5; 
             let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             let data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1; // 白噪音
-            }
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
             noiseNode.buffer = buffer;
             
-            // 低通濾波器製造悶響
             let filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.value = 400;
-
+            filter.type = 'lowpass'; filter.frequency.value = 300;
             let noiseGain = audioCtx.createGain();
             noiseGain.gain.setValueAtTime(1, audioCtx.currentTime);
             noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
 
-            noiseNode.connect(filter);
-            filter.connect(noiseGain);
-            noiseGain.connect(audioCtx.destination);
+            noiseNode.connect(filter); filter.connect(noiseGain); noiseGain.connect(audioCtx.destination);
             noiseNode.start();
         }
 
-        // 驚嚇音效：轟炸機俯衝
-        function playBomberSwoosh() {
-            if(!isAudioPlaying || !audioCtx) return;
-            let swooshOsc = audioCtx.createOscillator();
-            swooshOsc.type = 'sawtooth';
-            // 頻率從高急降
-            swooshOsc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            swooshOsc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 1.2);
-            
-            let swooshGain = audioCtx.createGain();
-            swooshGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-            swooshGain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.6);
-            swooshGain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 1.2);
-
-            swooshOsc.connect(swooshGain);
-            swooshGain.connect(audioCtx.destination);
-            swooshOsc.start();
-            swooshOsc.stop(audioCtx.currentTime + 1.5);
-        }
-
-        function triggerTinnitus() {
-            if(!isAudioPlaying || !audioCtx) return;
-            tinnitusOsc = audioCtx.createOscillator();
-            tinnitusOsc.type = 'sine';
-            tinnitusOsc.frequency.value = 4500; 
-            
-            tinnitusGain = audioCtx.createGain();
-            tinnitusGain.gain.setValueAtTime(0, audioCtx.currentTime);
-            tinnitusGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.1);
-            tinnitusGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4);
-
-            tinnitusOsc.connect(tinnitusGain);
-            tinnitusGain.connect(audioCtx.destination);
-            tinnitusOsc.start();
-            tinnitusOsc.stop(audioCtx.currentTime + 4.5);
-        }
-
         function toggleAudio() {
+            initAudio();
             const icon = document.getElementById('audio-icon');
+            const secretAudio = document.getElementById('secret-audio');
+
             if(isAudioPlaying) {
                 droneGain.gain.setTargetAtTime(0, audioCtx.currentTime, 1);
+                radioGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+                secretAudio.pause();
                 icon.setAttribute('data-lucide', 'volume-x');
                 icon.classList.remove('text-[#9E3B3B]');
             } else {
                 if(audioCtx.state === 'suspended') audioCtx.resume();
-                droneGain.gain.setTargetAtTime(0.8, audioCtx.currentTime, 2);
+                droneGain.gain.setTargetAtTime(0.7, audioCtx.currentTime, 2);
+                
+                // 為了破解瀏覽器 Autoplay 限制，在此先 load 或短暫播放
+                secretAudio.volume = 0;
+                secretAudio.play().then(() => secretAudio.pause()).catch(e=>{});
+
                 icon.setAttribute('data-lucide', 'volume-2');
                 icon.classList.add('text-[#9E3B3B]');
+                document.getElementById('radio-dial').dispatchEvent(new Event('input'));
             }
             lucide.createIcons();
             isAudioPlaying = !isAudioPlaying;
@@ -580,91 +634,223 @@
 
         document.getElementById('audio-toggle').addEventListener('click', toggleAudio);
 
-        // --- 4. 進入防空洞 ---
         function enterShelter() {
-            root.style.setProperty('--light-size', '45vmax'); 
-            document.getElementById('audio-toggle').classList.remove('opacity-0');
+            root.style.setProperty('--light-size', '40vmax'); 
+            const btn = document.getElementById('enter-btn');
+            btn.innerHTML = '<span class="tracking-widest">已沉入</span>';
+            btn.classList.add('border-[#9E3B3B]', 'text-[#9E3B3B]', 'pointer-events-none');
+            
+            document.getElementById('collection-ui').style.opacity = '1';
+
             initAudio();
             if(!isAudioPlaying) toggleAudio(); 
-            window.scrollBy({ top: window.innerHeight * 0.9, behavior: 'smooth' });
+            setTimeout(() => window.scrollBy({ top: window.innerHeight * 0.4, behavior: 'smooth' }), 800);
         }
 
-        // --- 5. 互動：屏息躲藏 (Hold to Hide) + 驚嚇閃光彈 ---
+        function initRadioInteraction() {
+            const slider = document.getElementById('radio-dial');
+            const msg = document.getElementById('radio-msg');
+            const secretAudio = document.getElementById('secret-audio');
+            const targetFreq = 78; // 目標頻率刻度
+
+            slider.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value);
+                let distance = Math.abs(val - targetFreq);
+                
+                // 震動回饋 (越接近越震動)
+                if (distance < 5 && navigator.vibrate) navigator.vibrate(10);
+
+                if(isAudioPlaying && audioCtx) {
+                    if (distance < 15) {
+                        // 接近目標：降低雜訊，播放 1.mp3
+                        let fade = 1 - (distance / 15); // 0 to 1
+                        
+                        // 雜訊變小、變慢
+                        radioGain.gain.setTargetAtTime(0.02 + (1-fade)*0.1, audioCtx.currentTime, 0.1);
+                        radioStaticNode.playbackRate.value = 1 - (fade * 0.5); 
+                        
+                        // 隱藏音檔漸強
+                        if (secretAudio.paused) {
+                            secretAudio.play().catch(err => console.log("Audio play prevented", err));
+                        }
+                        secretAudio.volume = fade;
+                        
+                    } else {
+                        // 遠離目標：純白噪音
+                        radioGain.gain.setTargetAtTime(0.1, audioCtx.currentTime, 0.1);
+                        radioStaticNode.playbackRate.value = 1;
+                        
+                        // 關閉隱藏音檔
+                        secretAudio.volume = 0;
+                        if (!secretAudio.paused) {
+                            secretAudio.pause();
+                        }
+                    }
+                }
+
+                // 處理文字與視覺
+                if (distance === 0) {
+                    msg.classList.add('found');
+                    msg.innerHTML = "「...這裡是...還有人...聽見嗎...」";
+                    root.style.setProperty('--light-size', '60vmax'); // 光暈變大
+                    if (navigator.vibrate) navigator.vibrate([50, 50, 100]); 
+                } else {
+                    msg.classList.remove('found');
+                    msg.innerHTML = "「...滋滋...沙沙...」";
+                    root.style.setProperty('--light-size', '40vmax');
+                }
+            });
+        }
+
+        function collectFragment(element, id) {
+            if(element.classList.contains('collected')) return;
+            element.classList.add('collected');
+            fragmentsCollected++;
+            
+            document.getElementById('dot-' + fragmentsCollected).classList.add('filled');
+            
+            if(isAudioPlaying && audioCtx) {
+                let bell = audioCtx.createOscillator();
+                bell.type = 'sine';
+                bell.frequency.setValueAtTime(800 + (id * 200), audioCtx.currentTime);
+                let bGain = audioCtx.createGain();
+                bGain.gain.setValueAtTime(0, audioCtx.currentTime);
+                bGain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1);
+                bGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+                bell.connect(bGain); bGain.connect(audioCtx.destination);
+                bell.start(); bell.stop(audioCtx.currentTime + 1.2);
+            }
+            if (navigator.vibrate) navigator.vibrate(30);
+
+            if(fragmentsCollected === 3) {
+                setTimeout(() => {
+                    alert("【系統提示】你拼湊了完整的記憶。有些事，其實從未發生...");
+                }, 1000);
+            }
+        }
+
+        function initScratchCanvas() {
+            const canvas = document.getElementById('scratch-canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            let isDrawing = false;
+            
+            function resizeCanvas() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                ctx.fillStyle = '#111111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for(let i=0; i<1000; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#050505';
+                    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
+                }
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            function scratch(x, y) {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 25, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            function getCoordinates(e) {
+                const rect = canvas.getBoundingClientRect();
+                let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
+            canvas.addEventListener('pointerdown', (e) => {
+                isDrawing = true;
+                let coords = getCoordinates(e);
+                scratch(coords.x, coords.y);
+            });
+
+            canvas.addEventListener('pointermove', (e) => {
+                if (!isDrawing) return;
+                e.preventDefault(); 
+                let coords = getCoordinates(e);
+                scratch(coords.x, coords.y);
+                if(Math.random() > 0.8 && navigator.vibrate) navigator.vibrate(5);
+            });
+
+            canvas.addEventListener('pointerup', () => isDrawing = false);
+            canvas.addEventListener('pointerleave', () => isDrawing = false);
+        }
+
         const holdZone = document.getElementById('hold-zone');
         const blackout = document.getElementById('blackout');
         const flashbang = document.getElementById('flashbang');
-        let holdVibrationInterval;
+        let holdTimer;
+        let isHolding = false;
 
-        holdZone.addEventListener('touchstart', (e) => {
+        function startHold(e) {
             e.preventDefault();
-            blackout.style.opacity = '1';
-            root.style.setProperty('--light-size', '0vmax'); 
+            isHolding = true;
+            holdZone.classList.add('is-holding');
             
-            if(isAudioPlaying) droneOsc.frequency.setTargetAtTime(42, audioCtx.currentTime, 0.5);
+            holdTimer = setTimeout(() => {
+                if(isHolding) {
+                    blackout.style.opacity = '1';
+                    root.style.setProperty('--light-size', '0vmax'); 
+                    if(isAudioPlaying) droneOsc.frequency.setTargetAtTime(35, audioCtx.currentTime, 0.5);
+                    if (navigator.vibrate) navigator.vibrate(50);
+                }
+            }, 1000);
+        }
 
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
-                holdVibrationInterval = setInterval(() => {
-                    navigator.vibrate([40, 200, 40]); // 心跳震動
-                }, 900); 
+        function endHold(e) {
+            if(!isHolding) return;
+            isHolding = false;
+            clearTimeout(holdTimer);
+            holdZone.classList.remove('is-holding');
+            
+            if (blackout.style.opacity === '1') {
+                blackout.style.opacity = '0';
+                root.style.setProperty('--light-size', '40vmax');
+                if(isAudioPlaying) droneOsc.frequency.setTargetAtTime(45, audioCtx.currentTime, 1);
+                
+                flashbang.style.opacity = '0.9';
+                playFlashSound();
+                if (navigator.vibrate) navigator.vibrate(200); 
+
+                setTimeout(() => {
+                    flashbang.style.transition = 'opacity 1s ease-out';
+                    flashbang.style.opacity = '0';
+                    setTimeout(() => { flashbang.style.transition = 'opacity 0.1s ease-out'; }, 1000);
+                }, 50);
             }
-        }, {passive: false});
+        }
 
-        holdZone.addEventListener('touchend', () => {
-            clearInterval(holdVibrationInterval);
-            blackout.style.opacity = '0';
-            root.style.setProperty('--light-size', '45vmax');
-            if(isAudioPlaying) droneOsc.frequency.setTargetAtTime(50, audioCtx.currentTime, 1);
-            
-            // 驚嚇特效：鬆開的瞬間產生白閃光與震動悶響
-            flashbang.style.opacity = '0.9';
-            playFlashSound();
-            if (navigator.vibrate) navigator.vibrate(200); // 單次重擊震動
+        holdZone.addEventListener('pointerdown', startHold);
+        holdZone.addEventListener('pointerup', endHold);
+        holdZone.addEventListener('pointerleave', endHold);
 
-            setTimeout(() => {
-                flashbang.style.transition = 'opacity 1s ease-out'; // 緩慢消退
-                flashbang.style.opacity = '0';
-                setTimeout(() => { flashbang.style.transition = 'opacity 0.1s ease-out'; }, 1000);
-            }, 50);
-        });
-
-        // --- 6. 滾動偵測與創傷震顫 (Quake + Tinnitus) ---
         const revealElements = document.querySelectorAll('.reveal');
-        const quakeTarget = document.getElementById('quake-target');
-
         const scrollObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    
                     if(entry.target.id === 'quake-trigger') {
-                        quakeTarget.classList.add('quake-effect');
+                        const qt = document.getElementById('quake-target');
+                        qt.classList.add('quake-effect');
                         if (navigator.vibrate) navigator.vibrate([100, 50, 150, 50, 300, 50, 500]);
-                        triggerTinnitus();
-                        
-                        setTimeout(() => {
-                            quakeTarget.classList.remove('quake-effect');
-                            quakeTarget.style.opacity = '0.7';
-                        }, 3000);
+                        setTimeout(() => qt.classList.remove('quake-effect'), 3000);
                     }
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15, rootMargin: "0px 0px -100px 0px" });
-
+        }, { threshold: 0.1, rootMargin: "0px 0px -10% 0px" });
         revealElements.forEach(el => scrollObserver.observe(el));
 
-        // --- 7. 角色網格事件綁定與打字機解碼 ---
         let typeWriterTimer;
-
         function bindCharClicks() {
             const items = document.querySelectorAll('.char-item');
             items.forEach(item => {
                 item.addEventListener('click', function() {
-                    const name = this.dataset.name;
-                    const action = this.dataset.action;
-                    const quote = this.dataset.quote;
-                    openStory(name, action, quote, this);
+                    openStory(this.dataset.name, this.dataset.action, this.dataset.quote, this);
                 });
             });
         }
@@ -674,112 +860,108 @@
             const contentBox = document.getElementById('story-content-box');
             const items = document.querySelectorAll('.char-item');
             
-            const nameEl = document.getElementById('story-name');
-            const actionEl = document.getElementById('story-action');
-            const quoteEl = document.getElementById('story-quote');
-            
-            // 重置
             clearTimeout(typeWriterTimer);
-            nameEl.innerHTML = name;
+            document.getElementById('story-name').innerHTML = name;
+            const actionEl = document.getElementById('story-action');
             actionEl.innerHTML = action;
             actionEl.classList.remove('opacity-100');
+            const quoteEl = document.getElementById('story-quote');
             quoteEl.innerHTML = ''; 
             quoteEl.classList.add('typewriter-cursor');
 
-            // 鎖定滾動與開啟 Modal
             document.body.classList.add('modal-open');
             modal.classList.remove('opacity-0', 'pointer-events-none');
+            contentBox.classList.add('scale-100');
             
-            // 點擊瞬間強烈震動
-            if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
-            contentBox.classList.add('scale-100', 'is-rumbling');
-            setTimeout(() => contentBox.classList.remove('is-rumbling'), 200);
-            
-            // 背景網格卡片暗化，選中的高亮
             items.forEach(item => {
                 if(item === clickedElement) item.classList.add('is-active');
                 else item.classList.add('is-dimmed');
             });
 
-            // 漸顯動作/旁白
-            setTimeout(() => {
-                actionEl.classList.add('opacity-100');
-            }, 800);
+            setTimeout(() => actionEl.classList.add('opacity-100'), 800);
 
-            // 創傷打字機特效
             let i = 0;
             function typeWriter() {
                 if (i < quote.length) {
                     let char = quote.charAt(i);
                     quoteEl.innerHTML += char;
-                    
-                    if (navigator.vibrate && char.trim() !== '') {
-                        navigator.vibrate(12);
-                    }
-                    
                     i++;
-                    let delay = 120; 
-                    if (['，', '。', '？', '！', '...'].includes(char)) delay = 600; 
-                    else delay = Math.random() * 80 + 80;
-
+                    let delay = ['，', '。', '？', '！', '...'].includes(char) ? 500 : Math.random() * 60 + 60;
                     typeWriterTimer = setTimeout(typeWriter, delay);
                 } else {
                     quoteEl.classList.remove('typewriter-cursor'); 
                 }
             }
-
-            setTimeout(typeWriter, 2000); 
+            setTimeout(typeWriter, 1500); 
         }
 
         function closeStory() {
-            const modal = document.getElementById('story-modal');
-            const contentBox = document.getElementById('story-content-box');
-            const items = document.querySelectorAll('.char-item');
-            
             clearTimeout(typeWriterTimer);
-
             document.body.classList.remove('modal-open');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            contentBox.classList.remove('scale-100');
-
-            items.forEach(item => item.classList.remove('is-active', 'is-dimmed'));
+            document.getElementById('story-modal').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('story-content-box').classList.remove('scale-100');
+            document.querySelectorAll('.char-item').forEach(item => item.classList.remove('is-active', 'is-dimmed'));
         }
 
-        // --- 8. 紙飛機滑動 + 驚嚇：轟炸機黑影 ---
         const plane = document.getElementById('airplane');
-        let touchStartY = 0;
+        let startY = 0;
+        let isDraggingPlane = false;
         let airplaneSwiped = false;
-        plane.addEventListener('touchstart', e => touchStartY = e.touches[0].clientY, {passive: true});
-        plane.addEventListener('touchend', e => {
-            if (touchStartY - e.changedTouches[0].clientY > 40 && !airplaneSwiped) flyAirplane();
-        }, {passive: true});
+
+        plane.addEventListener('pointerdown', e => {
+            if(airplaneSwiped) return;
+            isDraggingPlane = true;
+            startY = e.clientY;
+            plane.setPointerCapture(e.pointerId); 
+        });
+
+        plane.addEventListener('pointermove', e => {
+            if(!isDraggingPlane || airplaneSwiped) return;
+            let deltaY = e.clientY - startY;
+            if(deltaY < -40) { 
+                isDraggingPlane = false;
+                flyAirplane();
+            } else if (deltaY > 0 && deltaY < 40) {
+                plane.style.transform = `translateY(${deltaY}px)`;
+            }
+        });
+
+        plane.addEventListener('pointerup', e => {
+            if(airplaneSwiped) return;
+            isDraggingPlane = false;
+            plane.style.transform = `translateY(0px)`;
+            plane.releasePointerCapture(e.pointerId);
+        });
 
         function flyAirplane() {
             airplaneSwiped = true;
+            plane.style.transform = ''; 
             plane.classList.add('airplane-fly');
             document.getElementById('airplane-hint').style.opacity = '0';
             
-            if (navigator.vibrate) navigator.vibrate(40);
-            plane.style.pointerEvents = 'none';
-
-            // 等待1.5秒後，本以為是感人的文字，結果天空出現了轟炸機黑影
             setTimeout(() => {
                 const bomber = document.getElementById('bomber-shadow');
                 bomber.classList.add('swoop');
-                playBomberSwoosh();
                 
-                // 黑影掠過時的深沉震動
+                if(isAudioPlaying && audioCtx) {
+                    let osc = audioCtx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 1.5);
+                    let gain = audioCtx.createGain();
+                    gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.8);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 1.5);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + 1.8);
+                }
+                
                 if (navigator.vibrate) navigator.vibrate([100, 50, 500]);
                 
-                // 轟炸機過後，才浮現出絕望的台詞
-                setTimeout(() => {
-                    document.getElementById('airplane-msg').classList.add('show');
-                }, 1000);
-
-            }, 1500);
+                setTimeout(() => document.getElementById('airplane-msg').classList.add('show'), 1200);
+            }, 1000);
         }
 
-        // --- 9. 灰塵與微光牆 ---
         function createDust() {
             const container = document.getElementById('dust-container');
             for (let i = 0; i < 40; i++) {
@@ -798,25 +980,37 @@
         function createWhisperWall() {
             const wall = document.getElementById('whisper-wall');
             const whispers = ["我的泰迪熊呢","這裡好黑","不想吃罐頭了","爸爸何時回來","不要哭，噓","明天會天亮嗎","你聽到聲音了嗎","我好想看海"];
+            
+            wall.style.display = 'grid';
+            wall.style.gridTemplateColumns = 'repeat(auto-fit, minmax(100px, 1fr))';
+            wall.style.gap = '3rem';
+            wall.style.alignItems = 'center';
+            wall.style.justifyItems = 'center';
+            wall.style.padding = '0 2rem';
+
             whispers.forEach(text => {
+                let dotContainer = document.createElement('div');
+                dotContainer.style.position = 'relative';
+                dotContainer.style.transform = `translate(${Math.random()*40 - 20}px, ${Math.random()*80 - 40}px)`;
+
                 let dot = document.createElement('div');
                 dot.className = 'whisper-dot';
-                dot.style.top = (Math.random() * 85 + 5) + '%';
-                dot.style.left = (Math.random() * 85 + 5) + '%';
                 
                 let msg = document.createElement('span');
                 msg.className = 'whisper-text';
                 msg.innerText = text;
+                
                 dot.appendChild(msg);
-                wall.appendChild(dot);
+                dotContainer.appendChild(dot);
+                wall.appendChild(dotContainer);
 
-                dot.addEventListener('touchstart', e => {
+                dot.addEventListener('pointerdown', e => {
                     e.preventDefault();
                     if(dot.classList.contains('touched')) return;
                     dot.classList.add('touched');
                     if (navigator.vibrate) navigator.vibrate(20);
                     setTimeout(() => dot.classList.remove('touched'), 3500);
-                }, {passive: false});
+                });
             });
         }
     </script>
