@@ -2,7 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- 確保手機端不會因為雙擊或縮放而跑版 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>煙霧中長大的孩子：防空洞裡學會的事</title>
     
@@ -14,11 +13,14 @@
         :root {
             --cursor-x: 50vw;
             --cursor-y: 50vh;
-            --light-size: 65vmax; 
+            --light-size: 80vmax; /* 提亮：加大初始光暈 */
         }
 
         body {
-            background-color: #0a0a0a; 
+            background-color: #161616; /* 提亮：從極黑 #0a0a0a 改為深灰 #161616 */
+            /* 加入漸層讓背景有深淺變化的流動感，而非死板的單色 */
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #111111 50%, #0a0a0a 100%);
+            background-attachment: fixed;
             color: #EAE6DF;
             font-family: 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
@@ -30,23 +32,24 @@
 
         h1, h2, .font-serif { font-family: 'Noto Serif TC', serif; }
 
-        /* 底片顆粒與環境光 */
         .grain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtP38+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAJklEQVQ4y2NgGAWjYBSMglEwCkbBKBgFo2AUjIJRMApGwSgYBaNgFAwAAwB7AQABK5Sj1AAAAABJRU5ErkJggg==');
-            opacity: 0.12; pointer-events: none; z-index: 50;
+            opacity: 0.1; pointer-events: none; z-index: 50; /* 提亮：降低顆粒感 */
         }
 
         .depth-line {
             position: fixed; top: 0; left: 50%; transform: translateX(-50%);
             width: 1px; height: 100vh;
-            background: linear-gradient(to bottom, transparent, rgba(158, 59, 59, 0.15), transparent);
+            /* 讓引導線更柔和連貫 */
+            background: linear-gradient(to bottom, transparent, rgba(158, 59, 59, 0.25) 20%, rgba(158, 59, 59, 0.25) 80%, transparent);
             pointer-events: none; z-index: 1;
         }
 
         .flashlight-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle var(--light-size) at var(--cursor-x) var(--cursor-y), rgba(40,40,40,0) 0%, rgba(20,20,20,0.6) 40%, rgba(5,5,5,0.98) 100%);
+            /* 提亮：整體環境透明度提高，暗角從 0.98 降到 0.85 */
+            background: radial-gradient(circle var(--light-size) at var(--cursor-x) var(--cursor-y), rgba(60,60,60,0) 0%, rgba(30,30,30,0.4) 40%, rgba(15,15,15,0.85) 100%);
             pointer-events: none; z-index: 40; transition: background 0.8s ease-out; 
             animation: breathe 5s ease-in-out infinite;
         }
@@ -92,26 +95,28 @@
         }
 
         .reveal {
-            opacity: 0; transform: translateY(60px) scale(0.95); filter: blur(8px);
-            transition: all 2.5s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0; transform: translateY(80px) scale(0.98); filter: blur(10px);
+            /* 改用更平滑、更具水滴感的緩動函數，消除出現時的生硬感 */
+            transition: all 2.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reveal.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 
         .oppressive-container { display: flex; flex-direction: column; gap: 20vh; width: 100%; }
         .oppressive-text {
-            font-size: 48vw; line-height: 0.8; color: #1a1a1a; font-weight: 900;
+            font-size: 48vw; line-height: 0.8; color: #222; font-weight: 900; /* 提亮文字顏色 */
             white-space: nowrap; user-select: none; margin-left: -15vw;
-            text-shadow: 0 0 40px rgba(0,0,0,0.8);
+            text-shadow: 0 0 40px rgba(0,0,0,0.6);
         }
         .oppressive-text:nth-child(even) { margin-left: 25vw; text-align: right; }
 
         .glitch { animation: glitch-anim 4s infinite; }
         @keyframes glitch-anim {
-            0%, 92%, 100% { transform: translate(0); color: #1a1a1a; opacity: 1; }
+            0%, 92%, 100% { transform: translate(0); color: #222; opacity: 1; }
             94% { transform: translate(-4px, 3px); color: #9E3B3B; opacity: 0.8; }
-            96% { transform: translate(4px, -3px); color: #1a1a1a; opacity: 0.9; }
-            98% { transform: translate(-3px, -2px); color: #444; opacity: 1; }
+            96% { transform: translate(4px, -3px); color: #222; opacity: 0.9; }
+            98% { transform: translate(-3px, -2px); color: #555; opacity: 1; }
         }
+        
         .quake-effect {
             animation: quake 0.25s ease-in-out infinite alternate;
             filter: blur(3px) !important; color: #9E3B3B; transform: scale(1.05);
@@ -124,96 +129,96 @@
             100% { transform: translate(4px, -5px) rotate(-1.5deg); }
         }
 
-        /* 收音機調頻 */
-        .radio-container {
-            width: 100%; max-width: 300px; margin: 0 auto;
-            position: relative; padding: 20px 0;
-        }
+        .radio-container { width: 100%; max-width: 300px; margin: 0 auto; position: relative; padding: 20px 0; }
         .radio-slider {
             -webkit-appearance: none; width: 100%; height: 2px;
-            background: linear-gradient(90deg, #333 0%, #9E3B3B 50%, #333 100%);
-            outline: none; border-radius: 2px; opacity: 0.7; transition: opacity 0.2s;
+            background: linear-gradient(90deg, #444 0%, #9E3B3B 50%, #444 100%);
+            outline: none; border-radius: 2px; opacity: 0.8; transition: opacity 0.2s;
         }
         .radio-slider::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none;
             width: 16px; height: 32px; background: #EAE6DF;
-            cursor: pointer; box-shadow: 0 0 15px rgba(234, 230, 223, 0.6);
-            border-radius: 2px;
+            cursor: pointer; box-shadow: 0 0 15px rgba(234, 230, 223, 0.8); border-radius: 2px;
         }
-        .radio-signal-text {
-            opacity: 0.5; filter: blur(4px); transition: all 0.5s ease;
-            color: #444; text-shadow: none;
-        }
+        .radio-signal-text { opacity: 0.5; filter: blur(4px); transition: all 0.5s ease; color: #666; }
         .radio-signal-text.found { 
-            opacity: 1; filter: blur(0); 
-            color: #9E3B3B; text-shadow: 0 0 15px rgba(158, 59, 59, 0.8);
+            opacity: 1; filter: blur(0); color: #9E3B3B; text-shadow: 0 0 15px rgba(158, 59, 59, 0.8);
         }
 
-        /* 擦拭畫布 */
         .scratch-container {
-            position: relative; width: 100%; max-width: 320px; aspect-ratio: 4/3;
-            margin: 0 auto; overflow: hidden; border: 1px solid rgba(158, 59, 59, 0.2);
-            border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative; width: 100%; max-width: 320px; aspect-ratio: 4/3; margin: 0 auto;
+            overflow: hidden; border: 1px solid rgba(158, 59, 59, 0.4);
+            border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
         .scratch-content {
             position: absolute; inset: 0; display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 2rem;
-            background: #111; color: #EAE6DF; text-align: center;
+            background: #1a1a1a; color: #EAE6DF; text-align: center;
         }
         #scratch-canvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10; touch-action: none; cursor: crosshair;
         }
 
-        /* 收集記憶碎片 */
         .memory-fragment {
-            position: absolute; width: 40px; height: 40px;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; z-index: 35; opacity: 0.6; transition: all 0.3s ease;
+            position: absolute; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 35; opacity: 0.7; transition: all 0.3s ease;
         }
         .memory-fragment::before {
             content: ''; position: absolute; width: 8px; height: 8px;
             background-color: #9E3B3B; border-radius: 50%;
-            box-shadow: 0 0 12px 3px rgba(158, 59, 59, 0.8);
+            box-shadow: 0 0 15px 4px rgba(158, 59, 59, 0.9);
             animation: pulse-fragment 2s infinite alternate;
         }
         .memory-fragment.collected { transform: scale(3); opacity: 0; pointer-events: none; }
-        @keyframes pulse-fragment { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
+        @keyframes pulse-fragment { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.2); opacity: 1; } }
 
         .collection-ui {
             position: fixed; top: 20px; left: 20px; z-index: 90;
             display: flex; gap: 8px; opacity: 0; transition: opacity 1s ease; pointer-events: none;
         }
-        .collection-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            border: 1px solid #444; transition: all 0.5s ease;
-        }
+        .collection-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid #666; transition: all 0.5s ease; }
         .collection-dot.filled { background-color: #9E3B3B; border-color: #9E3B3B; box-shadow: 0 0 10px #9E3B3B; }
 
         .hold-progress {
             position: absolute; inset: 0;
-            background: radial-gradient(circle, rgba(158, 59, 59, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(158, 59, 59, 0.4) 0%, transparent 70%);
             border-radius: 50%; transform: scale(0); transition: transform 0.1s linear;
         }
         .is-holding .hold-progress { transform: scale(1.5); transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .char-item { transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; }
+        .char-item { transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; padding: 10px; }
         .char-item:hover { opacity: 1 !important; filter: blur(0px) !important; transform: scale(1.05); }
         .char-item::after {
-            content: ''; position: absolute; bottom: -8px; left: 30%; right: 30%;
-            height: 1px; background: linear-gradient(90deg, transparent, rgba(158, 59, 59, 0.5), transparent);
+            content: ''; position: absolute; bottom: 0px; left: 30%; right: 30%;
+            height: 1px; background: linear-gradient(90deg, transparent, rgba(158, 59, 59, 0.6), transparent);
             opacity: 0; transition: opacity 0.5s ease;
         }
-        .char-item.is-dimmed { opacity: 0.1; filter: blur(3px); transform: scale(0.95); }
+        .char-item.is-dimmed { opacity: 0.15; filter: blur(2px); transform: scale(0.95); }
         .char-item.is-active { transform: scale(1.2); opacity: 1; z-index: 20; }
-        .char-item.is-active .char-name { color: #9E3B3B; text-shadow: 0 0 20px rgba(158, 59, 59, 0.6); }
+        .char-item.is-active .char-name { color: #9E3B3B; text-shadow: 0 0 20px rgba(158, 59, 59, 0.8); }
         .char-item.is-active::after { opacity: 1; }
 
         .story-modal { transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); }
         .typewriter-cursor::after { content: '|'; animation: blink 1s step-end infinite; color: #9E3B3B; margin-left: 2px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* 紙飛機與微光牆 */
+        /* 演員照片特效 */
+        .actor-photo-wrapper {
+            position: relative; width: 140px; height: 180px; margin: 0 auto 20px auto;
+            border-radius: 4px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(158,59,59,0.2);
+            opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .actor-photo-wrapper::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .actor-photo-wrapper.show { opacity: 1; transform: translateY(0); }
+        .actor-photo { width: 100%; height: 100%; object-fit: cover; filter: grayscale(80%) contrast(1.2); transition: filter 0.5s ease; }
+        .actor-photo-wrapper:hover .actor-photo { filter: grayscale(30%) contrast(1.1); }
+
         .airplane-container { transition: all 1.2s ease-in; position: relative; z-index: 45; touch-action: none; padding: 40px; cursor: grab; }
         .airplane-container:active { cursor: grabbing; }
         .airplane-fly { transform: translateY(-60vh) scale(0.2) rotate(25deg); opacity: 0; }
@@ -221,12 +226,12 @@
         .airplane-text.show { opacity: 1; filter: blur(0); }
 
         .whisper-dot {
-            width: 14px; height: 14px; background-color: rgba(234, 230, 223, 0.2);
+            width: 14px; height: 14px; background-color: rgba(234, 230, 223, 0.3);
             border-radius: 50%; position: absolute; transition: all 0.4s ease;
-            box-shadow: 0 0 10px rgba(234, 230, 223, 0.1); z-index: 45; padding: 25px; background-clip: content-box; cursor: pointer;
+            box-shadow: 0 0 15px rgba(234, 230, 223, 0.2); z-index: 45; padding: 25px; background-clip: content-box; cursor: pointer;
         }
-        .whisper-dot:hover { background-color: rgba(234, 230, 223, 0.5); transform: scale(1.2); }
-        .whisper-dot.touched { background-color: #EAE6DF; box-shadow: 0 0 30px rgba(234, 230, 223, 1); transform: scale(1.4); }
+        .whisper-dot:hover { background-color: rgba(234, 230, 223, 0.6); transform: scale(1.2); }
+        .whisper-dot.touched { background-color: #EAE6DF; box-shadow: 0 0 35px rgba(234, 230, 223, 1); transform: scale(1.4); }
         .whisper-text {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
             white-space: nowrap; font-size: 1rem; color: #EAE6DF;
@@ -235,20 +240,19 @@
         }
         .whisper-dot.touched .whisper-text { opacity: 1; filter: blur(0); }
 
-        /* FAB 與提示 */
         .fab-ticket {
             position: fixed; bottom: 2rem; right: 2rem; z-index: 90;
-            background: rgba(10, 10, 10, 0.6); border: 1px solid rgba(158, 59, 59, 0.3);
+            background: rgba(20, 20, 20, 0.7); border: 1px solid rgba(158, 59, 59, 0.4);
             color: #EAE6DF; padding: 1rem 1.5rem; border-radius: 50px;
             font-family: 'Noto Serif TC', serif; letter-spacing: 0.2em; display: flex; align-items: center; gap: 8px;
-            backdrop-filter: blur(8px); box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px); box-shadow: 0 4px 30px rgba(0,0,0,0.6);
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none; opacity: 0; transform: translateY(30px) scale(0.9); pointer-events: none;
         }
         .fab-ticket.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         .fab-ticket:hover {
-            border-color: #9E3B3B; color: #fff; background: rgba(20, 10, 10, 0.9);
-            box-shadow: 0 0 25px rgba(158, 59, 59, 0.5); transform: translateY(-5px);
+            border-color: #9E3B3B; color: #fff; background: rgba(30, 15, 15, 0.9);
+            box-shadow: 0 0 25px rgba(158, 59, 59, 0.6); transform: translateY(-5px);
         }
         .fab-pulse { width: 8px; height: 8px; background-color: #9E3B3B; border-radius: 50%; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
 
@@ -257,11 +261,28 @@
             opacity: 0; transition: opacity 1.5s ease; animation: bounce-soft 2.5s infinite;
             pointer-events: none; text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
-        @keyframes bounce-soft {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(12px); }
-        }
+        @keyframes bounce-soft { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(12px); } }
         body.modal-open { overflow: hidden; }
+
+        /* 演職人員名單樣式 */
+        .crew-list {
+            display: grid; grid-template-columns: auto 1fr; gap: 1rem 2rem; align-items: center;
+            max-width: 400px; margin: 0 auto;
+        }
+        @media (max-width: 640px) {
+            .crew-list { grid-template-columns: 1fr; gap: 0.5rem; text-align: center; }
+            .crew-title { opacity: 0.6; font-size: 0.8rem; margin-bottom: -4px;}
+        }
+
+        /* 系統提示訊息 */
+        #system-message {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: rgba(20,20,20,0.9); border: 1px solid #9E3B3B; color: #EAE6DF;
+            padding: 12px 24px; border-radius: 4px; font-family: 'Noto Serif TC', serif;
+            letter-spacing: 0.1em; font-size: 0.9rem; z-index: 100; opacity: 0; pointer-events: none;
+            transition: all 0.5s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.8); text-align: center;
+        }
+        #system-message.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -271,7 +292,10 @@
     <!-- 隱藏的收音機真實音檔 -->
     <audio id="secret-audio" src="1.mp3" loop preload="auto"></audio>
 
-    <!-- 記憶碎片收集 UI (隱藏直到進入) -->
+    <!-- 自訂系統提示 -->
+    <div id="system-message"></div>
+
+    <!-- 記憶碎片收集 UI -->
     <div class="collection-ui" id="collection-ui">
         <div class="collection-dot" id="dot-1"></div>
         <div class="collection-dot" id="dot-2"></div>
@@ -279,9 +303,9 @@
     </div>
 
     <!-- 散落的記憶碎片 -->
-    <div class="memory-fragment" style="top: 180vh; left: 15vw;" onclick="collectFragment(this, 1)"></div>
-    <div class="memory-fragment" style="top: 420vh; right: 10vw;" onclick="collectFragment(this, 2)"></div>
-    <div class="memory-fragment" style="top: 720vh; left: 50vw; transform: translateX(-50%);" onclick="collectFragment(this, 3)"></div>
+    <div class="memory-fragment" style="top: 250vh; left: 15vw;" onclick="collectFragment(this, 1)"></div>
+    <div class="memory-fragment" style="top: 480vh; right: 10vw;" onclick="collectFragment(this, 2)"></div>
+    <div class="memory-fragment" style="top: 800vh; left: 50vw; transform: translateX(-50%);" onclick="collectFragment(this, 3)"></div>
 
     <div class="flashlight-overlay" id="flashlight"></div>
     <div class="blackout-overlay" id="blackout"></div>
@@ -296,9 +320,9 @@
         <span class="text-xs tracking-widest font-serif opacity-0 group-hover:opacity-100 transition-opacity w-0 group-hover:w-auto overflow-hidden whitespace-nowrap">環境音效</span>
     </button>
 
-    <a href="#ticket-link" id="fab-ticket" class="fab-ticket group">
+    <a href="https://s.opentix.life/p/Pe40c2823" target="_blank" rel="noopener noreferrer" id="fab-ticket" class="fab-ticket group">
         <div class="fab-pulse"></div>
-        <span class="text-sm">輕聲購票</span>
+        <span class="text-sm">輕鬆購票</span>
     </a>
 
     <main class="min-h-[100dvh] flex flex-col justify-center items-center p-6 text-center relative z-20">
@@ -311,25 +335,39 @@
         
         <div class="mt-12 space-y-12 opacity-0 transition-opacity duration-[3000ms] delay-[2000ms] relative z-30" id="hero-content">
             <p class="text-lg md:text-xl italic text-[#EAE6DF] opacity-90 font-serif tracking-[0.2em] drop-shadow-md">「今天外面的天空，很吵。」</p>
-            <button onclick="enterShelter()" id="enter-btn" class="border border-[#9E3B3B]/50 text-[#EAE6DF] px-10 py-5 hover:border-[#9E3B3B] hover:bg-[#9E3B3B]/10 transition duration-1000 uppercase tracking-[0.2em] text-sm group cursor-pointer relative overflow-hidden backdrop-blur-sm shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <button onclick="enterShelter()" id="enter-btn" class="border border-[#9E3B3B]/60 text-[#EAE6DF] px-10 py-5 hover:border-[#9E3B3B] hover:bg-[#9E3B3B]/10 transition duration-1000 uppercase tracking-[0.2em] text-sm group cursor-pointer relative overflow-hidden backdrop-blur-sm shadow-[0_0_20px_rgba(0,0,0,0.5)]">
                 <span class="relative z-10 drop-shadow-md">進入防空洞</span>
-                <span class="block text-xs text-gray-500 mt-3 opacity-80 tracking-widest relative z-10 transition-colors duration-500">開啟音效與微光，開始探索</span>
+                <span class="block text-xs text-gray-400 mt-3 opacity-80 tracking-widest relative z-10 transition-colors duration-500">開啟音效與微光，開始探索</span>
             </button>
         </div>
 
-        <div id="scroll-hint" class="scroll-hint flex flex-col items-center text-[#EAE6DF]/40">
+        <div id="scroll-hint" class="scroll-hint flex flex-col items-center text-[#EAE6DF]/50">
             <span class="text-xs tracking-widest mb-2 font-serif">向下深入</span>
             <i data-lucide="chevron-down" class="w-5 h-5"></i>
         </div>
     </main>
 
-    <section class="min-h-[150vh] relative flex flex-col justify-start items-center overflow-hidden z-10 pt-[20vh]">
-        <div class="absolute w-full top-20 oppressive-container opacity-80 pointer-events-none z-10 mix-blend-multiply">
+    <section class="py-32 px-8 max-w-3xl mx-auto relative z-20">
+        <div class="reveal flex flex-col items-center">
+            <h3 class="font-serif text-[#9E3B3B] tracking-[0.5em] text-sm mb-12 uppercase border-b border-[#9E3B3B]/30 pb-4">劇情設計理念</h3>
+            
+            <div class="font-serif text-[#EAE6DF] opacity-80 space-y-8 tracking-[0.15em] leading-[2.2] text-sm md:text-base text-justify text-left">
+                <p>當我們談論戰爭時，我們究竟是在談論戰爭本身，還是在談論被敘述、被轉譯後的戰爭？</p>
+                <p>大多數人並未親身經歷戰爭。我們對戰爭的理解來自新聞畫面、影像紀錄、社群媒體、歷史教材與他人的描述。我們透過媒介認識世界，也透過媒介建立對世界的想像。然而，當現實被不斷轉譯、包裝與重構時，我們所理解的究竟是真實，還是被建構的真實？</p>
+                <p>《煙霧中長大的孩子：防空洞裡學會的事》以兒童視角出發，重新觀看戰爭經驗。在孩子的世界裡，爆炸被稱作打雷，濃煙成了雲霧，墜落的灰燼是天空送來的禮物，而盤旋於空中的無人機則化為監視眾人的惡魔。面對無法理解的現實，孩子並非缺乏認知，而是透過想像與象徵重新詮釋世界。</p>
+                <p>然而，這些被包裝的語言真能掩蓋真相嗎？</p>
+                <p>展覽透過沉浸式敘事空間，引導觀眾穿梭於三個層次之間：從媒介所建構的世界、到兒童透過想像所理解的世界，最終抵達無法迴避的戰爭現實。觀眾將不再只是旁觀者，而是在感知、懷疑與理解的過程中，逐步意識到自己也身處於各種敘事所編織的現實之中。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="min-h-[120vh] relative flex flex-col justify-start items-center overflow-hidden z-10">
+        <div class="absolute w-full top-20 oppressive-container opacity-60 pointer-events-none z-10 mix-blend-multiply">
             <h2 class="oppressive-text">轟炸</h2>
             <h2 class="oppressive-text glitch">警報</h2>
         </div>
         
-        <div class="reveal relative z-20 max-w-2xl mx-auto px-8 text-center mt-[80vh]">
+        <div class="reveal relative z-20 max-w-2xl mx-auto px-8 text-center mt-[60vh]">
             <p class="text-base md:text-lg text-gray-300 tracking-[0.3em] leading-[3.5] border-l-[1px] border-[#9E3B3B]/50 pl-8 text-left drop-shadow-[0_4px_10px_rgba(0,0,0,1)]">
                 大人用很大的聲音，<br>
                 說著我們聽不懂的詞彙。<br><br>
@@ -341,14 +379,14 @@
 
     <section class="py-32 px-8 max-w-xl mx-auto relative z-20 text-center">
         <div class="reveal flex flex-col items-center">
-            <i data-lucide="radio" class="w-8 h-8 text-[#555] mb-8"></i>
+            <i data-lucide="radio" class="w-8 h-8 text-[#666] mb-8"></i>
             <p class="text-xs text-gray-400 tracking-[0.4em] mb-12 font-serif">試著左右滑動，在雜訊中尋找微弱的訊號</p>
             
             <div class="radio-container">
                 <input type="range" min="0" max="100" value="10" class="radio-slider" id="radio-dial">
-                <div class="flex justify-between w-full mt-6 text-[10px] text-[#444] font-mono tracking-widest">
+                <div class="flex justify-between w-full mt-6 text-[10px] text-[#666] font-mono tracking-widest">
                     <span>FM 88.0</span>
-                    <span class="text-[#9E3B3B] opacity-50 pulse-fragment">CH. 4</span>
+                    <span class="text-[#9E3B3B] opacity-70 pulse-fragment">CH. 4</span>
                     <span>AM 108</span>
                 </div>
             </div>
@@ -364,12 +402,12 @@
     <section class="py-40 px-8 max-w-2xl mx-auto relative z-20 text-center">
         <div class="reveal w-64 h-64 mx-auto flex flex-col justify-center items-center relative cursor-pointer select-none" id="hold-zone">
             <div class="hold-progress"></div>
-            <div class="absolute inset-0 rounded-full border-[1px] border-[#9E3B3B] opacity-20 animate-ping pointer-events-none shadow-[0_0_30px_rgba(158,59,59,0.2)]"></div>
+            <div class="absolute inset-0 rounded-full border-[1px] border-[#9E3B3B] opacity-30 animate-ping pointer-events-none shadow-[0_0_30px_rgba(158,59,59,0.3)]"></div>
             
             <div class="relative z-10 flex flex-col items-center pointer-events-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-                <i data-lucide="hand" class="w-6 h-6 text-[#9E3B3B] mb-4 opacity-70"></i>
+                <i data-lucide="hand" class="w-6 h-6 text-[#9E3B3B] mb-4 opacity-80"></i>
                 <p class="text-base md:text-lg text-[#EAE6DF] tracking-widest font-serif font-light">按住不放</p>
-                <p class="text-xs md:text-sm text-gray-500 tracking-[0.2em] mt-3 leading-loose">屏住呼吸<br>躲避上面的人</p>
+                <p class="text-xs md:text-sm text-gray-400 tracking-[0.2em] mt-3 leading-loose">屏住呼吸<br>躲避上面的人</p>
             </div>
         </div>
     </section>
@@ -394,13 +432,13 @@
 
     <section class="py-32 px-8 max-w-3xl mx-auto space-y-40 relative z-20">
         <div class="reveal text-center">
-            <p class="text-xl md:text-3xl font-serif text-[#EAE6DF] tracking-widest drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] opacity-80">
+            <p class="text-xl md:text-3xl font-serif text-[#EAE6DF] tracking-widest drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] opacity-90">
                 大人說，只要躲好，就不會被看見。
             </p>
         </div>
 
         <div class="reveal flex justify-center items-center w-full min-h-[30vh]" id="quake-trigger">
-            <p class="text-2xl md:text-4xl font-serif text-[#9E3B3B] tracking-widest transition-all duration-300 leading-[2.5] text-center drop-shadow-[0_0_25px_rgba(158,59,59,0.4)]" id="quake-target">
+            <p class="text-2xl md:text-4xl font-serif text-[#9E3B3B] tracking-widest transition-all duration-300 leading-[2.5] text-center drop-shadow-[0_0_25px_rgba(158,59,59,0.5)]" id="quake-target">
                 「可是，如果整片天空<br>掉下來了呢？」
             </p>
         </div>
@@ -409,67 +447,75 @@
     <section class="py-32 px-4 relative z-20">
         <div id="grid-view" class="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center transition-all duration-1000 ease-in-out">
             <div class="text-center mb-32 reveal">
-                <h3 class="font-serif tracking-[0.8em] text-[#EAE6DF] opacity-30 text-sm md:text-base mb-6 drop-shadow-md">THE CHILDREN</h3>
-                <p class="font-serif tracking-[0.4em] text-[#9E3B3B]/80 text-sm md:text-base">點擊名字，聽見那些沒有被說出口的恐懼</p>
+                <h3 class="font-serif tracking-[0.8em] text-[#EAE6DF] opacity-40 text-sm md:text-base mb-6 drop-shadow-md">THE CHILDREN</h3>
+                <p class="font-serif tracking-[0.4em] text-[#9E3B3B]/90 text-sm md:text-base">點擊名字，聽見那些沒有被說出口的恐懼</p>
             </div>
             
-            <!-- 調整 Grid 以容納 13 人 -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-20 gap-x-4 w-full">
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="王韋鈞" data-action="他最近開始害怕下雨。" data-quote="「滴答，滴答... 聽起來好像那天晚上的聲音。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">王韋鈞</span>
+                <!-- 更新 data-role 與 data-img -->
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="王韋鈞" data-role="演員" data-img="1.jpg" data-action="他最近開始害怕下雨。" data-quote="「滴答，滴答... 聽起來好像那天晚上的聲音。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">王韋鈞</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="吳佩錡" data-action="她把最喜歡的蠟筆藏在鞋子裡。" data-quote="「因為鞋子是要穿著跑的，跑的時候，顏色就不會被炸碎。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">吳佩錡</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="吳佩錡" data-role="演員" data-img="2.jpg" data-action="她把最喜歡的蠟筆藏在鞋子裡。" data-quote="「因為鞋子是要穿著跑的，跑的時候，顏色就不會被炸碎。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">吳佩錡</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="徐瑞宏" data-action="他總是一直盯著天花板。" data-quote="「如果在天花板畫上天空，我們是不是就可以出去了？」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">徐瑞宏</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="徐瑞宏" data-role="演員" data-img="3.jpg" data-action="他總是一直盯著天花板。" data-quote="「如果在天花板畫上天空，我們是不是就可以出去了？」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">徐瑞宏</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="曾語潔" data-action="她已經三天沒有開口說話了。" data-quote="「大人說，只要不出聲，怪物就找不到我們。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">曾語潔</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="曾語潔" data-role="演員" data-img="4.jpg" data-action="她已經三天沒有開口說話了。" data-quote="「大人說，只要不出聲，怪物就找不到我們。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">曾語潔</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="蕭靜瑩" data-action="她睡前會把耳朵緊緊摀住。" data-quote="「就算很安靜的時候，我還是能聽見那種嗡嗡的尖叫聲。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">蕭靜瑩</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="蕭靜瑩" data-role="演員" data-img="5.jpg" data-action="她睡前會把耳朵緊緊摀住。" data-quote="「就算很安靜的時候，我還是能聽見那種嗡嗡的尖叫聲。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">蕭靜瑩</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="葉相吟" data-action="她的口袋裡裝滿了撕碎的紙條。" data-quote="「每一張上面都寫著回家的路，但我好像忘記家長什麼樣子了。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">葉相吟</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="葉相吟" data-role="妝造設計" data-img="6.jpg" data-action="她的口袋裡裝滿了撕碎的紙條。" data-quote="「每一張上面都寫著回家的路，但我好像忘記家長什麼樣子了。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">葉相吟</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="林孝丞" data-action="他以為防空洞只是一個捉迷藏的遊戲。" data-quote="「為什麼這次鬼當了那麼久，還不說找到你了？」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林孝丞</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="林孝丞" data-role="燈光設計" data-img="7.jpg" data-action="他以為防空洞只是一個捉迷藏的遊戲。" data-quote="「為什麼這次鬼當了那麼久，還不說找到你了？」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">林孝丞</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="李柏翰" data-action="他不敢再看天空飛過的鳥。" data-quote="「因為上一次，飛過去的黑鳥掉下了會爆炸的蛋。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">李柏翰</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="李柏翰" data-role="展覽策劃" data-img="8.jpg" data-action="他不敢再看天空飛過的鳥。" data-quote="「因為上一次，飛過去的黑鳥掉下了會爆炸的蛋。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">李柏翰</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="廖冠皓" data-action="他一直在畫同一個沒有門的房子。" data-quote="「沒有門，壞人進不來；但我們，好像也出不去了。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">廖冠皓</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="廖冠皓" data-role="互動設計/展覽策劃" data-img="9.jpg" data-action="他一直在畫同一個沒有門的房子。" data-quote="「沒有門，壞人進不來；但我們，好像也出不去了。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">廖冠皓</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="林心惟" data-action="她說黑色的煙聞起來像燒焦的糖果。" data-quote="「那是那天媽媽給我的，最後一顆糖果的味道。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林心惟</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="林心惟" data-role="行政經理/行銷宣傳" data-img="10.jpg" data-action="她說黑色的煙聞起來像燒焦的糖果。" data-quote="「那是那天媽媽給我的，最後一顆糖果的味道。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">林心惟</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="陳雅均" data-action="她堅持要穿著大人的外套睡覺。" data-quote="「外套上還有爸爸的味道，假裝爸爸還在。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">陳雅均</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="陳雅均" data-role="舞台監督" data-img="11.jpg" data-action="她堅持要穿著大人的外套睡覺。" data-quote="「外套上還有爸爸的味道，假裝爸爸還在。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">陳雅均</span>
                 </div>
-                <div class="char-item text-center cursor-pointer reveal py-2" data-name="呂穎薰" data-action="她把洋娃娃的眼睛用布矇了起來。" data-quote="「不要看，看了晚上會做惡夢哦...」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">呂穎薰</span>
+                <div class="char-item text-center cursor-pointer reveal py-2" data-name="呂穎薰" data-role="執行製作/演員" data-img="12.jpg" data-action="她把洋娃娃的眼睛用布矇了起來。" data-quote="「不要看，看了晚上會做惡夢哦...」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">呂穎薰</span>
                 </div>
-                <!-- 第 13 位居中處理 -->
-                <div class="char-item text-center cursor-pointer reveal py-2 md:col-start-2 lg:col-start-auto" data-name="林珈儀" data-action="她在牆上畫了一扇窗，說可以看見星星。" data-quote="「可是地下室哪有星星呢？只有偶爾震動落下的灰塵。」">
-                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-70">林珈儀</span>
+                <div class="char-item text-center cursor-pointer reveal py-2 md:col-start-2 lg:col-start-auto" data-name="林珈儀" data-role="編劇/導演" data-img="13.jpg" data-action="她在牆上畫了一扇窗，說可以看見星星。" data-quote="「可是地下室哪有星星呢？只有偶爾震動落下的灰塵。」">
+                    <span class="char-name font-serif text-lg md:text-xl lg:text-2xl tracking-[0.4em] text-[#EAE6DF] opacity-80">林珈儀</span>
                 </div>
             </div>
         </div>
     </section>
 
     <div id="story-modal" class="story-modal fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none">
-        <div class="absolute inset-0 bg-[#000000]/95 backdrop-blur-2xl cursor-pointer" onclick="closeStory()" title="點擊關閉"></div>
-        <div id="story-content-box" class="relative z-10 p-8 max-w-lg w-full text-center scale-95 transition-transform duration-700 pointer-events-none">
-            <p id="story-name" class="text-2xl md:text-3xl text-gray-200 tracking-[0.8em] mb-4 font-serif drop-shadow-lg"></p>
-            <p id="story-action" class="text-sm md:text-base text-gray-400 tracking-[0.2em] mb-12 font-serif opacity-0 transition-opacity duration-1000 border-b border-[#333] pb-6 leading-loose"></p>
+        <div class="absolute inset-0 bg-[#0a0a0a]/95 backdrop-blur-2xl cursor-pointer" onclick="closeStory()" title="點擊關閉"></div>
+        
+        <div id="story-content-box" class="relative z-10 p-6 md:p-8 max-w-lg w-full text-center scale-95 transition-transform duration-700 pointer-events-none h-full md:h-auto flex flex-col justify-center overflow-y-auto">
             
-            <div class="min-h-[150px] flex items-center justify-center px-4">
-                <p id="story-quote" class="text-lg md:text-xl text-[#9E3B3B] leading-[2.5] tracking-[0.2em] font-serif text-center w-full shadow-black drop-shadow-[0_0_15px_rgba(0,0,0,1)]"></p>
+            <!-- 新增照片區塊 -->
+            <div id="story-photo-box" class="actor-photo-wrapper">
+                <img id="story-img" src="" alt="Actor Photo" class="actor-photo" onerror="this.src='https://placehold.co/300x400/222/555?text=NO+IMAGE'">
             </div>
 
-            <button onclick="closeStory()" class="mt-24 text-xs text-gray-500 hover:text-white tracking-[0.5em] border-b border-gray-800 pb-2 transition-colors pointer-events-auto font-serif">閉上眼</button>
+            <p id="story-name" class="text-2xl md:text-3xl text-gray-100 tracking-[0.6em] md:tracking-[0.8em] font-serif drop-shadow-lg mb-1"></p>
+            <p id="story-role" class="text-xs md:text-sm text-[#9E3B3B] tracking-[0.3em] font-serif mb-6 opacity-0 transition-opacity duration-1000"></p>
+
+            <p id="story-action" class="text-sm md:text-base text-gray-400 tracking-[0.2em] mb-8 font-serif opacity-0 transition-opacity duration-1000 border-b border-[#333] pb-6 leading-loose"></p>
+            
+            <div class="min-h-[120px] flex items-center justify-center px-2 md:px-4">
+                <p id="story-quote" class="text-base md:text-lg text-[#EAE6DF] leading-[2.5] tracking-[0.2em] font-serif text-center w-full shadow-black drop-shadow-[0_0_15px_rgba(0,0,0,1)]"></p>
+            </div>
+
+            <button onclick="closeStory()" class="mt-12 text-xs text-gray-500 hover:text-white tracking-[0.5em] border-b border-gray-800 pb-2 transition-colors pointer-events-auto font-serif mx-auto">閉上眼</button>
         </div>
     </div>
 
@@ -480,7 +526,7 @@
                     <path d="M22 2L11 13"></path>
                     <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
                 </svg>
-                <div class="flex flex-col items-center mt-10 text-[#9E3B3B]/60 animate-pulse pointer-events-none" id="airplane-hint">
+                <div class="flex flex-col items-center mt-10 text-[#9E3B3B]/70 animate-pulse pointer-events-none" id="airplane-hint">
                     <i data-lucide="chevrons-up" class="w-5 h-5 mb-3"></i>
                     <p class="text-xs tracking-[0.4em] font-light">按住向上飛出</p>
                 </div>
@@ -491,24 +537,48 @@
         </div>
     </section>
 
-    <section class="min-h-[100dvh] relative flex flex-col items-center justify-center z-40 py-20 bg-gradient-to-t from-[#020202] via-[#0a0a0a] to-transparent">
+    <!-- 移除原本生硬的漸層背景 (bg-gradient-to-t...)，讓畫面自然過渡 -->
+    <section class="min-h-[100dvh] relative flex flex-col items-center justify-center z-40 py-20">
         <div class="text-center absolute top-32 w-full reveal px-6 pointer-events-none z-10">
-            <p class="text-base text-[#EAE6DF]/60 tracking-[0.4em] font-serif leading-loose drop-shadow-md">黑暗裡，還有其他沒有說話的人。</p>
-            <p class="text-xs text-[#9E3B3B]/70 mt-6 tracking-[0.3em] font-light">（輕觸畫面上的微光）</p>
+            <p class="text-base text-[#EAE6DF]/70 tracking-[0.4em] font-serif leading-loose drop-shadow-md">黑暗裡，還有其他沒有說話的人。</p>
+            <p class="text-xs text-[#9E3B3B]/80 mt-6 tracking-[0.3em] font-light">（輕觸畫面上的微光）</p>
         </div>
         <div id="whisper-wall" class="w-full h-[70vh] relative mt-40 max-w-4xl mx-auto"></div>
     </section>
 
-    <footer class="reveal py-24 text-center relative z-20 pb-32 bg-[#020202]">
-        <p class="text-xs uppercase tracking-[0.5em] text-[#444] mb-4">2026 臺北藝穗節</p>
-        <p class="text-[10px] tracking-widest text-[#333] font-serif">煙霧中長大的孩子 © All Rights Reserved.</p>
+    <!-- 移除原本的背景色 bg-[#050505] 與頂部邊框 border-t border-[#333]/50，消除斷點感 -->
+    <section class="py-32 px-8 relative z-20">
+        <div class="reveal max-w-3xl mx-auto flex flex-col items-center">
+            <h3 class="font-serif text-[#EAE6DF] tracking-[0.6em] text-lg mb-16 uppercase opacity-80">演職人員名單</h3>
+            
+            <div class="crew-list font-serif text-[#EAE6DF] tracking-widest text-sm md:text-base opacity-70 w-full px-4">
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">編⠀⠀⠀劇</div><div class="crew-name text-left text-center md:text-left">林珈儀</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">導⠀⠀⠀演</div><div class="crew-name text-left text-center md:text-left">林珈儀</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">執行製作</div><div class="crew-name text-left text-center md:text-left">呂穎薰</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">舞台監督</div><div class="crew-name text-left text-center md:text-left">陳雅均</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">行政經理</div><div class="crew-name text-left text-center md:text-left">林心惟</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">互動設計</div><div class="crew-name text-left text-center md:text-left">廖冠皓</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">展覽策劃</div><div class="crew-name text-left text-center md:text-left">廖冠皓、李柏翰</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">行銷宣傳</div><div class="crew-name text-left text-center md:text-left">林心惟</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">文宣設計</div><div class="crew-name text-left text-center md:text-left">Anjan</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">妝造設計</div><div class="crew-name text-left text-center md:text-left">葉相吟</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">燈光設計</div><div class="crew-name text-left text-center md:text-left">林孝丞</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">燈光執行</div><div class="crew-name text-left text-center md:text-left">林書丞</div>
+                <div class="crew-title text-right md:text-right text-[#9E3B3B]">演⠀⠀⠀員</div><div class="crew-name text-left text-center md:text-left leading-loose">王韋鈞、吳佩錡、呂穎薰、徐瑞宏、曾語潔、蕭靜瑩<br><span class="text-xs opacity-50">（依姓氏筆劃排序）</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 移除 footer 原本的背景色 bg-[#050505] -->
+    <footer class="reveal py-24 text-center relative z-20">
+        <p class="text-xs uppercase tracking-[0.5em] text-[#555] mb-4">2026 臺北藝穗節</p>
+        <p class="text-[10px] tracking-widest text-[#444] font-serif">煙霧中長大的孩子 © All Rights Reserved.</p>
     </footer>
 
     <script>
         lucide.createIcons();
         const root = document.documentElement;
 
-        // --- 全局狀態 ---
         let audioCtx, droneOsc, droneGain, lfo, isAudioPlaying = false;
         let radioStaticNode, radioGain;
         let fragmentsCollected = 0;
@@ -531,7 +601,13 @@
             initRadioInteraction();
         };
 
-        // --- 手指探照燈 ---
+        function showSystemMsg(text) {
+            const msgBox = document.getElementById('system-message');
+            msgBox.innerText = text;
+            msgBox.classList.add('show');
+            setTimeout(() => msgBox.classList.remove('show'), 4000);
+        }
+
         function updateLight(e) {
             let x = e.clientX || (e.touches && e.touches[0].clientX);
             let y = e.clientY || (e.touches && e.touches[0].clientY);
@@ -552,7 +628,6 @@
             if(audioCtx) return;
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             
-            // 1. 環境低頻
             droneOsc = audioCtx.createOscillator();
             droneOsc.type = 'sine';
             droneOsc.frequency.value = 45; 
@@ -568,7 +643,6 @@
             droneOsc.connect(droneGain); droneGain.connect(audioCtx.destination);
             droneOsc.start(); lfo.start();
 
-            // 2. 收音機背景白噪音
             let bufferSize = audioCtx.sampleRate * 2; 
             let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             let data = buffer.getChannelData(0);
@@ -619,8 +693,6 @@
             } else {
                 if(audioCtx.state === 'suspended') audioCtx.resume();
                 droneGain.gain.setTargetAtTime(0.7, audioCtx.currentTime, 2);
-                
-                // 為了破解瀏覽器 Autoplay 限制，在此先 load 或短暫播放
                 secretAudio.volume = 0;
                 secretAudio.play().then(() => secretAudio.pause()).catch(e=>{});
 
@@ -635,7 +707,7 @@
         document.getElementById('audio-toggle').addEventListener('click', toggleAudio);
 
         function enterShelter() {
-            root.style.setProperty('--light-size', '40vmax'); 
+            root.style.setProperty('--light-size', '50vmax'); 
             const btn = document.getElementById('enter-btn');
             btn.innerHTML = '<span class="tracking-widest">已沉入</span>';
             btn.classList.add('border-[#9E3B3B]', 'text-[#9E3B3B]', 'pointer-events-none');
@@ -651,53 +723,38 @@
             const slider = document.getElementById('radio-dial');
             const msg = document.getElementById('radio-msg');
             const secretAudio = document.getElementById('secret-audio');
-            const targetFreq = 78; // 目標頻率刻度
+            const targetFreq = 78; 
 
             slider.addEventListener('input', (e) => {
                 let val = parseInt(e.target.value);
                 let distance = Math.abs(val - targetFreq);
                 
-                // 震動回饋 (越接近越震動)
                 if (distance < 5 && navigator.vibrate) navigator.vibrate(10);
 
                 if(isAudioPlaying && audioCtx) {
                     if (distance < 15) {
-                        // 接近目標：降低雜訊，播放 1.mp3
-                        let fade = 1 - (distance / 15); // 0 to 1
-                        
-                        // 雜訊變小、變慢
+                        let fade = 1 - (distance / 15); 
                         radioGain.gain.setTargetAtTime(0.02 + (1-fade)*0.1, audioCtx.currentTime, 0.1);
                         radioStaticNode.playbackRate.value = 1 - (fade * 0.5); 
-                        
-                        // 隱藏音檔漸強
-                        if (secretAudio.paused) {
-                            secretAudio.play().catch(err => console.log("Audio play prevented", err));
-                        }
+                        if (secretAudio.paused) secretAudio.play().catch(e=>{});
                         secretAudio.volume = fade;
-                        
                     } else {
-                        // 遠離目標：純白噪音
                         radioGain.gain.setTargetAtTime(0.1, audioCtx.currentTime, 0.1);
                         radioStaticNode.playbackRate.value = 1;
-                        
-                        // 關閉隱藏音檔
                         secretAudio.volume = 0;
-                        if (!secretAudio.paused) {
-                            secretAudio.pause();
-                        }
+                        if (!secretAudio.paused) secretAudio.pause();
                     }
                 }
 
-                // 處理文字與視覺
                 if (distance === 0) {
                     msg.classList.add('found');
                     msg.innerHTML = "「...這裡是...還有人...聽見嗎...」";
-                    root.style.setProperty('--light-size', '60vmax'); // 光暈變大
+                    root.style.setProperty('--light-size', '70vmax'); 
                     if (navigator.vibrate) navigator.vibrate([50, 50, 100]); 
                 } else {
                     msg.classList.remove('found');
                     msg.innerHTML = "「...滋滋...沙沙...」";
-                    root.style.setProperty('--light-size', '40vmax');
+                    root.style.setProperty('--light-size', '50vmax');
                 }
             });
         }
@@ -724,7 +781,7 @@
 
             if(fragmentsCollected === 3) {
                 setTimeout(() => {
-                    alert("【系統提示】你拼湊了完整的記憶。有些事，其實從未發生...");
+                    showSystemMsg("【系統提示】你拼湊了完整的記憶。有些事，其實從未發生...");
                 }, 1000);
             }
         }
@@ -738,10 +795,10 @@
                 const rect = canvas.parentElement.getBoundingClientRect();
                 canvas.width = rect.width;
                 canvas.height = rect.height;
-                ctx.fillStyle = '#111111';
+                ctx.fillStyle = '#161616';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 for(let i=0; i<1000; i++) {
-                    ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#050505';
+                    ctx.fillStyle = Math.random() > 0.5 ? '#1a1a1a' : '#0a0a0a';
                     ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
                 }
             }
@@ -809,7 +866,7 @@
             
             if (blackout.style.opacity === '1') {
                 blackout.style.opacity = '0';
-                root.style.setProperty('--light-size', '40vmax');
+                root.style.setProperty('--light-size', '50vmax');
                 if(isAudioPlaying) droneOsc.frequency.setTargetAtTime(45, audioCtx.currentTime, 1);
                 
                 flashbang.style.opacity = '0.9';
@@ -850,24 +907,45 @@
             const items = document.querySelectorAll('.char-item');
             items.forEach(item => {
                 item.addEventListener('click', function() {
-                    openStory(this.dataset.name, this.dataset.action, this.dataset.quote, this);
+                    openStory(
+                        this.dataset.name, 
+                        this.dataset.role, 
+                        this.dataset.action, 
+                        this.dataset.quote, 
+                        this.dataset.img, 
+                        this
+                    );
                 });
             });
         }
 
-        function openStory(name, action, quote, clickedElement) {
+        function openStory(name, role, action, quote, imgSrc, clickedElement) {
             const modal = document.getElementById('story-modal');
             const contentBox = document.getElementById('story-content-box');
             const items = document.querySelectorAll('.char-item');
             
             clearTimeout(typeWriterTimer);
+            
+            // 設定資料
             document.getElementById('story-name').innerHTML = name;
+            
+            const roleEl = document.getElementById('story-role');
+            roleEl.innerHTML = `—— ${role} ——`;
+            roleEl.classList.remove('opacity-100');
+
             const actionEl = document.getElementById('story-action');
             actionEl.innerHTML = action;
             actionEl.classList.remove('opacity-100');
+            
             const quoteEl = document.getElementById('story-quote');
             quoteEl.innerHTML = ''; 
             quoteEl.classList.add('typewriter-cursor');
+
+            // 處理照片
+            const imgEl = document.getElementById('story-img');
+            const photoBox = document.getElementById('story-photo-box');
+            photoBox.classList.remove('show');
+            imgEl.src = imgSrc; // 載入 1.jpg 等
 
             document.body.classList.add('modal-open');
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -878,7 +956,10 @@
                 else item.classList.add('is-dimmed');
             });
 
-            setTimeout(() => actionEl.classList.add('opacity-100'), 800);
+            // 動畫時序控制
+            setTimeout(() => { photoBox.classList.add('show'); }, 300);
+            setTimeout(() => { roleEl.classList.add('opacity-100'); }, 600);
+            setTimeout(() => { actionEl.classList.add('opacity-100'); }, 1000);
 
             let i = 0;
             function typeWriter() {
@@ -892,7 +973,7 @@
                     quoteEl.classList.remove('typewriter-cursor'); 
                 }
             }
-            setTimeout(typeWriter, 1500); 
+            setTimeout(typeWriter, 1800); 
         }
 
         function closeStory() {
