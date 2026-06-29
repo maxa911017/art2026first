@@ -266,12 +266,26 @@
 
         /* 演職人員名單樣式 */
         .crew-list {
-            display: grid; grid-template-columns: auto 1fr; gap: 1rem 2rem; align-items: center;
-            max-width: 400px; margin: 0 auto;
+            display: grid; 
+            grid-template-columns: max-content 1fr; 
+            gap: 1rem 1.5rem; 
+            align-items: start; /* 對齊頂部，避免名單折行時排版歪掉 */
+            max-width: 450px; 
+            margin: 0 auto;
+        }
+        .crew-title {
+            text-align: right;
+            color: #9E3B3B;
+            white-space: nowrap; /* 確保標題不會斷行 */
+        }
+        .crew-name {
+            text-align: left;
+            line-height: 1.6;
         }
         @media (max-width: 640px) {
-            .crew-list { grid-template-columns: 1fr; gap: 0.5rem; text-align: center; }
-            .crew-title { opacity: 0.6; font-size: 0.8rem; margin-bottom: -4px;}
+            .crew-list { gap: 0.8rem 1rem; }
+            .crew-title { font-size: 0.85rem; padding-top: 2px; } /* 微調手機版對齊 */
+            .crew-name { font-size: 0.85rem; }
         }
 
         /* 系統提示訊息 */
@@ -547,24 +561,24 @@
     </section>
 
     <!-- 移除原本的背景色 bg-[#050505] 與頂部邊框 border-t border-[#333]/50，消除斷點感 -->
-    <section class="py-32 px-8 relative z-20">
+    <section class="py-32 px-6 md:px-8 relative z-20">
         <div class="reveal max-w-3xl mx-auto flex flex-col items-center">
             <h3 class="font-serif text-[#EAE6DF] tracking-[0.6em] text-lg mb-16 uppercase opacity-80">演職人員名單</h3>
             
-            <div class="crew-list font-serif text-[#EAE6DF] tracking-widest text-sm md:text-base opacity-70 w-full px-4">
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">編⠀⠀⠀劇</div><div class="crew-name text-left text-center md:text-left">林珈儀</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">導⠀⠀⠀演</div><div class="crew-name text-left text-center md:text-left">林珈儀</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">執行製作</div><div class="crew-name text-left text-center md:text-left">呂穎薰</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">舞台監督</div><div class="crew-name text-left text-center md:text-left">陳雅均</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">行政經理</div><div class="crew-name text-left text-center md:text-left">林心惟</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">互動設計</div><div class="crew-name text-left text-center md:text-left">廖冠皓</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">展覽策劃</div><div class="crew-name text-left text-center md:text-left">廖冠皓、李柏翰</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">行銷宣傳</div><div class="crew-name text-left text-center md:text-left">林心惟</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">文宣設計</div><div class="crew-name text-left text-center md:text-left">Anjan</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">妝造設計</div><div class="crew-name text-left text-center md:text-left">葉相吟</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">燈光設計</div><div class="crew-name text-left text-center md:text-left">林孝丞</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">燈光執行</div><div class="crew-name text-left text-center md:text-left">林書丞</div>
-                <div class="crew-title text-right md:text-right text-[#9E3B3B]">演⠀⠀⠀員</div><div class="crew-name text-left text-center md:text-left leading-loose">王韋鈞、吳佩錡、呂穎薰、徐瑞宏、曾語潔、蕭靜瑩<br><span class="text-xs opacity-50">（依姓氏筆劃排序）</span></div>
+            <div class="crew-list font-serif text-[#EAE6DF] tracking-widest opacity-70 w-full">
+                <div class="crew-title">編⠀⠀⠀劇</div><div class="crew-name">林珈儀</div>
+                <div class="crew-title">導⠀⠀⠀演</div><div class="crew-name">林珈儀</div>
+                <div class="crew-title">執行製作</div><div class="crew-name">呂穎薰</div>
+                <div class="crew-title">舞台監督</div><div class="crew-name">陳雅均</div>
+                <div class="crew-title">行政經理</div><div class="crew-name">林心惟</div>
+                <div class="crew-title">互動設計</div><div class="crew-name">廖冠皓</div>
+                <div class="crew-title">展覽策劃</div><div class="crew-name">廖冠皓、李柏翰</div>
+                <div class="crew-title">行銷宣傳</div><div class="crew-name">林心惟</div>
+                <div class="crew-title">文宣設計</div><div class="crew-name">Anjan</div>
+                <div class="crew-title">妝造設計</div><div class="crew-name">葉相吟</div>
+                <div class="crew-title">燈光設計</div><div class="crew-name">林孝丞</div>
+                <div class="crew-title">燈光執行</div><div class="crew-name">林書丞</div>
+                <div class="crew-title">演⠀⠀⠀員</div><div class="crew-name leading-[1.8]">王韋鈞、吳佩錡、呂穎薰、徐瑞宏、曾語潔、蕭靜瑩<br><span class="text-xs opacity-50">（依姓氏筆劃排序）</span></div>
             </div>
         </div>
     </section>
